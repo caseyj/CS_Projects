@@ -4,10 +4,7 @@
 *
 *
 */
-typedef struct node{
-	struct node *nod;
-	char *data;
-}Node;
+#include "history.h"
 
 void printNodes(Node *head){
 	Node *current = head;
@@ -74,3 +71,33 @@ void freeNode(Node *begin){
 		free(current);
 	}
 }
+
+History *createHistory(){
+	History *newGuy = malloc(sizeof(History));
+	newGuy.max = MAX_HISTORY;
+	newGuy->history = NULL;
+	return newGuy;
+}
+
+int historySize(History *begin){
+	int returner = 0;
+	Node *current = begin->history;
+	while(current!=NULL){
+		returner++;
+		current = current->nod;	
+	}
+	return returner;
+}
+
+void printStory(History *begin){
+	int size = historySize(begin);
+	
+}
+
+void freeHistory(History *tar){
+	freeNode(tar.history);
+	free(tar);
+}
+
+
+

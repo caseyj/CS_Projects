@@ -1,3 +1,17 @@
+
+
+#define MAX_HISTORY	10	
+
+typedef struct node{
+	struct node *nod;
+	char *data;
+}Node;
+
+typedef struct queue{
+	int max;
+	Node *history;
+}History;
+
 /**
 *Defines the function that will print all of the members of the linked list
 	created  by Node structures.
