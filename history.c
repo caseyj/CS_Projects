@@ -124,5 +124,8 @@ void freeHistory(History *tar){
 	free(tar);
 }
 
-
+void setMaxSize(History *begin, int newSize){
+	begin.max = newSize;
+	
+}
 
