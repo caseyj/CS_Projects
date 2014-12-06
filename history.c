@@ -4,6 +4,10 @@
 *
 *
 */
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdbool.h>
 #include "history.h"
 
 void printNodes(Node *head){
@@ -35,15 +39,7 @@ void addNode(Node *head, char *new){
 		head = createNode(new);
 	}
 }
-/*
-Node *findNode(Node *head, User *tar){
-	Node *current = head;
-	while(current->data != tar){
-		current = current->nod;
-	}
-	return current;
-}
-*/
+
 Node *removal(Node *start, Node *tar){
 	Node *current = start;
 	Node *prev = NULL;
@@ -74,16 +70,16 @@ void freeNode(Node *begin){
 
 History *createHistory(){
 	History *newGuy = malloc(sizeof(History));
-	newGuy.max = MAX_HISTORY;
-	newGuy.current = BEGIN_HISTORY;
-	newGuy.currSize = BEGIN_SIZE;
-	newGuy->history = NULL;
+	newGuy->max = MAX_HISTORY;
+	newGuy->current = BEGIN_HISTORY;
+	newGuy->currSize = BEGIN_SIZE;
+	newGuy->hist = NULL;
 	return newGuy;
 }
 
 int historySize(History *begin){
 	int returner = 0;
-	Node *current = begin->history;
+	Node *current = begin->hist;
 	while(current!=NULL){
 		returner++;
 		current = current->nod;	
@@ -92,40 +88,77 @@ int historySize(History *begin){
 }
 
 void addToHistory(History *target, char *command){
-	addNode(target->history, command);
-	target.currSize++;
-	target.current++;
-	if(target.currSize > target.max){
-		Node *toFree = removal(target->history, target->history);
-		freeNode(target->history);
-		target.currSize--;
+	if(target->hist==NULL){
+		target->hist = createNode(command);
+		target->currSize++;
+		target->current++;
+	}
+	else{
+		addNode(target->hist, command);
+		target->currSize++;
+		target->current++;
+	}
+	while(historySize(target) > target->max){
+		//Node *toFree = removal(target->hist, target->hist);
+		//freeNode(toFree);
+		Node *holdMyBeer = target->hist;
+		target->hist = target->hist->nod;
+		free(holdMyBeer);
+		target->currSize--;
 	}
 }
 
+
 char *getCommand(History *target, int com){
-	Node *curr = target->history;
-	for(int i = (begin.current-begin.currentSize);i<=com;i++){
+	Node *curr = target->hist;
+	int current = (target->current - historySize(target));
+	while(current!=com){
 		curr = curr->nod;
+		current++;
 	}
 	return curr->data;
 }
 
 void printStory(History *begin){
 	int size = historySize(begin);
-	Node *curr = begin->history;
-	for(int i = (begin.current-begin.currentSize);i<=begin.currSize;i++){
-		printf("\t%d: %s", i, curr->data);
+	Node *curr = begin->hist;
+	int current = (begin->current - size);
+	while(curr!=NULL){
+		printf("\t%d: %s\n", current, curr->data);
 		curr = curr->nod;
+		current++;
 	}
 }
 
 void freeHistory(History *tar){
-	freeNode(tar.history);
+	freeNode(tar->hist);
 	free(tar);
 }
 
 void setMaxSize(History *begin, int newSize){
-	begin.max = newSize;
+	begin->max = newSize;
 	
 }
+
+int main(){
+	History *story = createHistory();
+	addToHistory(story, "ls");
+	addToHistory(story, "gcc");	
+	addToHistory(story, "gcc");	
+	addToHistory(story, "gcc");	
+	addToHistory(story, "gcc");	
+	addToHistory(story, "run");	
+	addToHistory(story, "gcc");	
+	addToHistory(story, "gcc");	
+	addToHistory(story, "cd");	
+	addToHistory(story, "gcc");
+	addToHistory(story, "gcc");
+	printStory(story);
+	printf("%s %s ", getCommand(story, 6),getCommand(story,  9));
+	freeHistory(story);
+	return 0;
+	
+
+}
+
 
