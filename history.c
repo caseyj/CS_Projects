@@ -139,7 +139,7 @@ void setMaxSize(History *begin, int newSize){
 	begin->max = newSize;
 	
 }
-
+/*
 int main(){
 	History *story = createHistory();
 	addToHistory(story, "ls");
@@ -160,5 +160,5 @@ int main(){
 	
 
 }
-
+*/
 
