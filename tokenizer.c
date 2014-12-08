@@ -101,6 +101,7 @@ char **runMachine(char *buffer){
 						}else{
 							smallStor[running] = thir9;
 						}//smallStor[running] = "\buffer[i]";
+						running++;
 						break;
 					default: smallStor[running] = buffer[i];
 						running++;
