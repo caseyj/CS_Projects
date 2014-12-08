@@ -187,12 +187,12 @@ void printTokens(char **tokens){
 		len++;
 	}
 }
-
+/*
 
 int main(){
 	printf("%d %d %d %d %d %d %d %d \n", toClass('\"'),toClass('\''),toClass('!'),toClass('a'),toClass(' '), toClass('A'), toClass('1'),toClass('-'));
-	char *test = "the quick sly brown fox jumped !21  \"Hellow \"  ";
+	char *test = "the quick sly brown fox jumped !21  \"Hellow \" -v ";
 	char **tokens = runMachine(test); 
 	printTokens(tokens);
 	return 0;
-}
+}*/
