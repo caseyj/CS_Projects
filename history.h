@@ -1,15 +1,19 @@
-
-
+#ifndef HISTORY_H
+#define HISTORY_H
 #define MAX_HISTORY	10	
+#define BEGIN_HISTORY	1
+#define BEGIN_SIZE	0
 
 typedef struct node{
 	struct node *nod;
 	char *data;
 }Node;
 
-typedef struct queue{
+typedef struct history{
 	int max;
-	Node *history;
+	int current;
+	int currSize;
+	Node *hist;
 }History;
 
 /**
@@ -74,3 +78,21 @@ Node *removal(Node *start, Node *tar);
 */
 void freeNode(Node *begin);
 
+History *createHistory();
+
+int historySize(History *begin);
+
+void addToHistory(History *target, char *command);
+
+char *getCommand(History *target, int com);
+
+void printStory(History *begin);
+
+void freeHistory(History *tar);
+
+void setMaxSize(History *begin, int newSize);
+
+
+
+
+#endif

@@ -69,7 +69,7 @@ void freeNode(Node *begin){
 }
 
 History *createHistory(){
-	History *newGuy = malloc(sizeof(History));
+	History *newGuy = malloc(sizeof(History)+1);
 	newGuy->max = MAX_HISTORY;
 	newGuy->current = BEGIN_HISTORY;
 	newGuy->currSize = BEGIN_SIZE;
@@ -99,8 +99,6 @@ void addToHistory(History *target, char *command){
 		target->current++;
 	}
 	while(historySize(target) > target->max){
-		//Node *toFree = removal(target->hist, target->hist);
-		//freeNode(toFree);
 		Node *holdMyBeer = target->hist;
 		target->hist = target->hist->nod;
 		free(holdMyBeer);
@@ -124,7 +122,7 @@ void printStory(History *begin){
 	Node *curr = begin->hist;
 	int current = (begin->current - size);
 	while(curr!=NULL){
-		printf("\t%d: %s\n", current, curr->data);
+		printf("%6d: %s\n", current, curr->data);
 		curr = curr->nod;
 		current++;
 	}
