@@ -27,7 +27,6 @@ typedef struct shell{
 	History *hist;	
 }Shell;
 
-static Shell *SHELL;
 
 Shell *setShell(int size, int verbose);
 

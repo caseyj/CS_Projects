@@ -109,7 +109,7 @@ void printHistory(){
 *	int -> an nteger determining which function/operation should be called.
 */
 int isInternal(char *command){
-	if((strcmp(command, BANG_S)==0) && (isdigit(command[1]))){
+	if((strcmp(command, BANG_S)==0)){
 		return BANG_N;
 	}
 	if(strcmp(command, QUIT_S)==0){

@@ -137,26 +137,4 @@ void setMaxSize(History *begin, int newSize){
 	begin->max = newSize;
 	
 }
-/*
-int main(){
-	History *story = createHistory();
-	addToHistory(story, "ls");
-	addToHistory(story, "gcc");	
-	addToHistory(story, "gcc");	
-	addToHistory(story, "gcc");	
-	addToHistory(story, "gcc");	
-	addToHistory(story, "run");	
-	addToHistory(story, "gcc");	
-	addToHistory(story, "gcc");	
-	addToHistory(story, "cd");	
-	addToHistory(story, "gcc");
-	addToHistory(story, "gcc");
-	printStory(story);
-	printf("%s %s ", getCommand(story, 6),getCommand(story,  9));
-	freeHistory(story);
-	return 0;
-	
-
-}
-*/
 

@@ -1,8 +1,7 @@
 /*
-
-
-
-
+Author: John Casey
+Title: tokenizer.c
+Purpose: tools to generate tokens specifically for the mysh package
 */
 #include <stdio.h>
 #include <ctype.h>
@@ -86,7 +85,6 @@ char **runMachine(char *buffer){
 					//printf("mech is now %d \n", mech.current);	
 					smallStor[running] = buffer[i];
 					running++;
-					//break;
 				}
 				if(currOp == BANG){
 					mech.current = ACC;
@@ -158,7 +156,28 @@ char **runMachine(char *buffer){
 	returnable[tokenNo] = NULL;
 	return returnable;
 }
+/**
+*VOID frees all members of a char **
+*
+*INPUTS:
+*	char **JRR: the string of arrays to be free'd
+*/
+void freeALL(char **JRR){
+	int i = 0;
+	while(JRR[i]!=NULL){
+		free(JRR[i]);
+		i++;
+	}
+	free(JRR);
+}
 
+/**
+*VOID prints all members of a char **
+*
+*INPUTS:
+*	char **tokens: the items to be printed
+*
+*/
 void printTokens(char **tokens){
 	int len = 0;
 	while(tokens[len]!=NULL){
@@ -166,12 +185,3 @@ void printTokens(char **tokens){
 		len++;
 	}
 }
-/*
-
-int main(){
-	printf("%d %d %d %d %d %d %d %d \n", toClass('\"'),toClass('\''),toClass('!'),toClass('a'),toClass(' '), toClass('A'), toClass('1'),toClass('-'));
-	char *test = "the quick sly brown fox jumped !21  \"Hellow \" -v ";
-	char **tokens = runMachine(test); 
-	printTokens(tokens);
-	return 0;
-}*/

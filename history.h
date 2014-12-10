@@ -78,6 +78,12 @@ Node *removal(Node *start, Node *tar);
 */
 void freeNode(Node *begin);
 
+/**
+*Returns an empty history
+*
+*OUTPUT:
+*	
+*/
 History *createHistory();
 
 int historySize(History *begin);

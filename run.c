@@ -1,5 +1,5 @@
 /**
-*
+*Author: John B. Casey
 *
 *
 **
@@ -135,10 +135,13 @@ void runExternally(char **CMD){
 *	Shell *s: the shell object containing the user history.
 */
 void run(char *CMD, Shell *s){
-	char **tokenI = malloc(sizeof(char) * (strlen(CMD)*2));
-	tokenI = runMachine(CMD);
+	//char **tokenI = malloc(sizeof(char) * (strlen(CMD)*2));
+	char **tokenI = runMachine(CMD);
 	int go = isInternal(tokenI[0]);
 	addToHistory(s->hist, CMD);
+	if(s->verbose==1){
+		printTokens(tokenI);
+	}
 	if(go!=EXTERNAL_N){
 		if(go == BANG_N){
 			run(getCommand(s->hist, sTInt(tokenI[1])),s);
@@ -148,5 +151,5 @@ void run(char *CMD, Shell *s){
 	}else{
 		runExternally(tokenI);
 	}
-	free(tokenI);
+	freeALL(tokenI);
 }
