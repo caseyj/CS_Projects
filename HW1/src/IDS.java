@@ -70,7 +70,6 @@ class gVert{
  *
  */
 public class Graph {
-
 	int SIZE, edge;
 	gVert[] VERTICES;
 	
@@ -85,6 +84,47 @@ public class Graph {
 }
 
 public class IDS {
+	int[] parents;
+	
+	/**
+	 * 
+	 * @param G
+	 * @param start
+	 * @param target
+	 * @return
+	 */
+	public static int iterative_deepening(Graph G, gVert start, gVert target){
+		found = new int[G.SIZE];
+		parents = new int[G.SIZE];
+		int returnPath = 0;
+		for(int i = 0; i<Integer.MAX_VALUE; i++){
+			check = check = depth_limited(Start.NEIGHBORS[i], i, target);
+		}
+		return returnPath;
+	}
+	
+	/**
+	 * 
+	 * @param Start
+	 * @param depth
+	 * @param target
+	 * @return
+	 */
+	public static int depth_limited(gVert Start, int depth, gVert target){
+		if((Start == target) && (depth==0)){
+			return 0
+		}
+		else{
+			for(int i = 0; i<Start.MLIST; i++){
+				check = depth_limited(Start.NEIGHBORS[i], depth-1, target);
+				if(check!=null){
+					parents[depth] = Start.NAME;
+					return check;
+				}
+			}
+		}
+		return null;
+	}
 	
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
