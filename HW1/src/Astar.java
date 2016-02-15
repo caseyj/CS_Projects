@@ -2,7 +2,8 @@
  * 
  */
 
-import java.util.comparator;
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.PriorityQueue;
 
 /**
@@ -16,7 +17,7 @@ class NodeComparator implements Comparator<gVert>{
 		if(x.tardis < y.tardis){
 			return -1;
 		}
-		if(x.tardis > tardis){
+		if(x.tardis > y.tardis){
 			return 1;
 		}
 		return 0;
@@ -82,8 +83,8 @@ class gVert{
 	 * @param b
 	 */
 	public void add_Undirect_Neighbor_0(gVert a, gVert b){
-		a.NEIGHBORS[MLIST] = b;
-		b.NEIGHBORS[MLIST] = a;
+		a.NEIGHBORS[a.MLIST] = b;
+		b.NEIGHBORS[b.MLIST] = a;
 		a.MLIST++; 
 		b.MLIST++;
 	}
@@ -94,10 +95,10 @@ class gVert{
  * @author Casey
  *
  */
-public class Graph {
+class Graph {
 	int SIZE, edge;
 	gVert[] VERTICES;
-	double[] targetDistances
+	double[] targetDistances;
 	
 	/**
 	 * 
@@ -143,12 +144,13 @@ public class Astar {
 		//initialize the parents array, this will keep track of the path 
 		//	taken by A*
 		int[] parents = new int[G.SIZE];
+		Arrays.fill(parents, -1);
 		
 		//Find the distance from all nodes to the target node and set their 
 		//	tardis variable to this number
 		for(int i = 0; i<G.SIZE; i++){
-			G.targetDistances[i] = distance(G.VERTICES, Target);
-			tardis = G.targetDistances[i];
+			G.targetDistances[i] = distance(G.VERTICES[i], Target);
+			G.VERTICES[i].tardis = G.targetDistances[i];
 		}
 		
 		//initialize the comparator used for priority queue
@@ -170,7 +172,7 @@ public class Astar {
 			
 			//loop through cParent's neighbors
 			for(int i = 0; i<cParent.MLIST; i++){
-				if(cParent == Start || parent[cParent.NEIGHBORS[i].NAME] != 0){
+				if(cParent.NAME == Start.NAME || parents[cParent.NEIGHBORS[i].NAME] == -1){
 					//the g(n) = distance between the parent and the current neighbor
 						//minus the distance already travelled between the parent
 					//the h(n) = the raw straight line distance between the current
@@ -180,7 +182,7 @@ public class Astar {
 					//add this node to the queue and set it's parent to the
 						//name of the current node/ it's parent
 					queue.add(cParent.NEIGHBORS[i]);
-					parents[i] = cParent.NAME;
+					parents[cParent.NEIGHBORS[i].NAME] = cParent.NAME;
 					
 					//if this is the Target node, return the parent list
 					if(cParent.NEIGHBORS[i] == Target){
@@ -201,113 +203,115 @@ public class Astar {
 		Graph G = new Graph(23);
 		String[] roomNumbers = new String[23];
 		
-		G.VERTICES[0] = gVert(0, 23, 43.084450, -77.679715);
+		G.VERTICES[0] = new gVert(0, 23, 43.084450, -77.679715);
 		roomNumbers[0] = "3435";
 		
-		G.VERTICES[1] = gVert(1, 23, 43.084394, -77.679716);
+		G.VERTICES[1] = new gVert(1, 23, 43.084394, -77.679716);
 		roomNumbers[1] = "3445";
 		G.VERTICES[1].add_Undirect_Neighbor_0(G.VERTICES[1], G.VERTICES[0]);
 		
-		G.VERTICES[2] = gVert(2, 23, 43.084313, -77.679679);
+		G.VERTICES[2] = new gVert(2, 23, 43.084313, -77.679679);
 		roomNumbers[2] = "34551";
 		G.VERTICES[2].add_Undirect_Neighbor_0(G.VERTICES[1], G.VERTICES[2]);
 		
-		G.VERTICES[3] = gVert(3, 23, 43.084244, -77.679726);
+		G.VERTICES[3] = new gVert(3, 23, 43.084244, -77.679726);
 		roomNumbers[3] = "35151";
 		G.VERTICES[3].add_Undirect_Neighbor_0(G.VERTICES[3], G.VERTICES[2]);
 	
-		G.VERTICES[4] = gVert(4, 23, 43.084221, -77.679725);
+		G.VERTICES[4] = new gVert(4, 23, 43.084221, -77.679725);
 		roomNumbers[4] = "35171";
 		G.VERTICES[4].add_Undirect_Neighbor_0(G.VERTICES[3], G.VERTICES[4]);
 
-		G.VERTICES[5] = gVert(5, 23, 43.084200, -77.679726);
+		G.VERTICES[5] = new gVert(5, 23, 43.084200, -77.679726);
 		roomNumbers[5] = "35191";
 		G.VERTICES[5].add_Undirect_Neighbor_0(G.VERTICES[5], G.VERTICES[4]);
 		
-		G.VERTICES[6] = gVert(6, 23, 43.084192, -77.680066);
+		G.VERTICES[6] = new gVert(6, 23, 43.084192, -77.680066);
 		roomNumbers[6] = "3519";
 		
-		G.VERTICES[7] = gVert(7, 23, 43.084213, -77.680065);
+		G.VERTICES[7] = new gVert(7, 23, 43.084213, -77.680065);
 		roomNumbers[7] = "3517";
 		G.VERTICES[7].add_Undirect_Neighbor_0(G.VERTICES[6], G.VERTICES[7]);
 		
-		G.VERTICES[8] = gVert(8, 23, 43.084234, -77.680069);
+		G.VERTICES[8] = new gVert(8, 23, 43.084234, -77.680069);
 		roomNumbers[8] = "3515";
 		G.VERTICES[8].add_Undirect_Neighbor_0(G.VERTICES[8], G.VERTICES[7]);
 		
-		G.VERTICES[9] = gVert(9, 23, 43.084262,  -77.680076);
+		G.VERTICES[9] = new gVert(9, 23, 43.084262,  -77.680076);
 		roomNumbers[9] = "3511";
 		G.VERTICES[9].add_Undirect_Neighbor_0(G.VERTICES[8], G.VERTICES[9]);
 		
-		G.VERTICES[10] = gVert(10, 23, 43.084288,  77.680068);
+		G.VERTICES[10] = new gVert(10, 23, 43.084288,  77.680068);
 		roomNumbers[10] = "3509";
 		G.VERTICES[10].add_Undirect_Neighbor_0(G.VERTICES[10], G.VERTICES[9]);
 		
-		G.VERTICES[11] = gVert(11, 23, 43.084214,  -77.679837);
+		G.VERTICES[11] = new gVert(11, 23, 43.084214,  -77.679837);
 		roomNumbers[11] = "3610";
 		G.VERTICES[11].add_Undirect_Neighbor_0(G.VERTICES[11], G.VERTICES[5]);
 		G.VERTICES[11].add_Undirect_Neighbor_0(G.VERTICES[11], G.VERTICES[4]);
 		G.VERTICES[11].add_Undirect_Neighbor_0(G.VERTICES[11], G.VERTICES[3]);
 		
-		G.VERTICES[12] = gVert(12, 23, 43.084215, -77.679967);
+		G.VERTICES[12] = new gVert(12, 23, 43.084215, -77.679967);
 		roomNumbers[12] = "3510";
 		G.VERTICES[12].add_Undirect_Neighbor_0(G.VERTICES[12], G.VERTICES[6]);
 		G.VERTICES[12].add_Undirect_Neighbor_0(G.VERTICES[12], G.VERTICES[7]);
 		G.VERTICES[12].add_Undirect_Neighbor_0(G.VERTICES[12], G.VERTICES[8]);
 		
-		G.VERTICES[13] = gVert(13, 23, 43.084275, -77.679835);
+		G.VERTICES[13] = new gVert(13, 23, 43.084275, -77.679835);
 		roomNumbers[13] = "3600";
 		G.VERTICES[13].add_Undirect_Neighbor_0(G.VERTICES[13], G.VERTICES[11]);
 		G.VERTICES[13].add_Undirect_Neighbor_0(G.VERTICES[13], G.VERTICES[2]);
 		
-		G.VERTICES[14] = gVert(14, 23, 43.084279, -77.679909);
+		G.VERTICES[14] = new gVert(14, 23, 43.084279, -77.679909);
 		roomNumbers[14] = "3441";
 		G.VERTICES[14].add_Undirect_Neighbor_0(G.VERTICES[14], G.VERTICES[12]);
 		G.VERTICES[14].add_Undirect_Neighbor_0(G.VERTICES[14], G.VERTICES[13]);
 		
-		G.VERTICES[15] = gVert(15, 23, 43.084279, -77.679978);
+		G.VERTICES[15] = new gVert(15, 23, 43.084279, -77.679978);
 		roomNumbers[15] = "3500";
 		G.VERTICES[15].add_Undirect_Neighbor_0(G.VERTICES[15], G.VERTICES[10]);
 		G.VERTICES[15].add_Undirect_Neighbor_0(G.VERTICES[15], G.VERTICES[9]);
 		G.VERTICES[15].add_Undirect_Neighbor_0(G.VERTICES[15], G.VERTICES[14]);
 		G.VERTICES[15].add_Undirect_Neighbor_0(G.VERTICES[15], G.VERTICES[12]);
 		
-		G.VERTICES[16] = gVert(16, 23, 43.084363, -77.679969);
+		G.VERTICES[16] = new gVert(16, 23, 43.084363, -77.679969);
 		roomNumbers[16] = "3430";
 		G.VERTICES[16].add_Undirect_Neighbor_0(G.VERTICES[16], G.VERTICES[15]);
 		G.VERTICES[16].add_Undirect_Neighbor_0(G.VERTICES[16], G.VERTICES[14]);
 	
-		G.VERTICES[17] = gVert(17, 23, 43.084356, -77.679883);
+		G.VERTICES[17] = new gVert(17, 23, 43.084356, -77.679883);
 		roomNumbers[17] = "3455";
 		G.VERTICES[17].add_Undirect_Neighbor_0(G.VERTICES[17], G.VERTICES[13]);
 		G.VERTICES[17].add_Undirect_Neighbor_0(G.VERTICES[16], G.VERTICES[17]);
 	
-		G.VERTICES[18] = gVert(18, 23, 43.084451, -77.679985);
+		G.VERTICES[18] = new gVert(18, 23, 43.084451, -77.679985);
 		roomNumbers[18] = "RND";
 		G.VERTICES[18].add_Undirect_Neighbor_0(G.VERTICES[16], G.VERTICES[18]);
 		
-		G.VERTICES[19] = gVert(19, 23, 43.084452,  -77.679899);
+		G.VERTICES[19] = new gVert(19, 23, 43.084452,  -77.679899);
 		roomNumbers[19] = "Computational Studies";
 		G.VERTICES[19].add_Undirect_Neighbor_0(G.VERTICES[19], G.VERTICES[18]);
 		
-		G.VERTICES[20] = gVert(20, 23, 43.084456, -77.679822);
+		G.VERTICES[20] = new gVert(20, 23, 43.084456, -77.679822);
 		roomNumbers[20] = "Honors";
 		G.VERTICES[20].add_Undirect_Neighbor_0(G.VERTICES[19], G.VERTICES[20]);
 		G.VERTICES[20].add_Undirect_Neighbor_0(G.VERTICES[20], G.VERTICES[0]);
 		
-		G.VERTICES[21] = gVert(21, 23, 43.084398, -77.679824);
+		G.VERTICES[21] = new gVert(21, 23, 43.084398, -77.679824);
 		roomNumbers[21] = "Xerox";
 		G.VERTICES[21].add_Undirect_Neighbor_0(G.VERTICES[21], G.VERTICES[20]);
 		G.VERTICES[21].add_Undirect_Neighbor_0(G.VERTICES[21], G.VERTICES[0]);
 		G.VERTICES[21].add_Undirect_Neighbor_0(G.VERTICES[21], G.VERTICES[1]);
 	
-		G.VERTICES[22] = gVert(22, 23, 43.084337,  -77.679828);
+		G.VERTICES[22] = new gVert(22, 23, 43.084337,  -77.679828);
 		roomNumbers[22] = "Adjunct Office";
-		G.VERTICES[22].add_Undirect_Neighbor_0(G.VERTICES[21], G.VERTICES[21]);
-		G.VERTICES[22].add_Undirect_Neighbor_0(G.VERTICES[21], G.VERTICES[17]);
+		G.VERTICES[22].add_Undirect_Neighbor_0(G.VERTICES[22], G.VERTICES[21]);
+		G.VERTICES[22].add_Undirect_Neighbor_0(G.VERTICES[22], G.VERTICES[17]);
 		G.VERTICES[22].add_Undirect_Neighbor_0(G.VERTICES[22], G.VERTICES[1]);
 		
-		System.out.println(G, roomNumbers);
+		//Run A* and store the path contents.
+		int[] h= A_Star(G, G.VERTICES[0], G.VERTICES[15]);
+		System.out.println(Arrays.toString(h));
 	}
 
 }
