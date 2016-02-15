@@ -257,8 +257,57 @@ public class Astar {
 		
 		G.VERTICES[13] = gVert(13, 23, 43.084275, -77.679835);
 		roomNumbers[13] = "3600";
-		G.VERTICES[13].add_Undirect_Neighbor_0(G.VERTICES[13], G.VERTICES[6]);
-		G.VERTICES[13].add_Undirect_Neighbor_0(G.VERTICES[13], G.VERTICES[7]);
+		G.VERTICES[13].add_Undirect_Neighbor_0(G.VERTICES[13], G.VERTICES[11]);
+		G.VERTICES[13].add_Undirect_Neighbor_0(G.VERTICES[13], G.VERTICES[2]);
+		
+		G.VERTICES[14] = gVert(14, 23, 43.084279, -77.679909);
+		roomNumbers[14] = "3441";
+		G.VERTICES[14].add_Undirect_Neighbor_0(G.VERTICES[14], G.VERTICES[12]);
+		G.VERTICES[14].add_Undirect_Neighbor_0(G.VERTICES[14], G.VERTICES[13]);
+		
+		G.VERTICES[15] = gVert(15, 23, 43.084279, -77.679978);
+		roomNumbers[15] = "3500";
+		G.VERTICES[15].add_Undirect_Neighbor_0(G.VERTICES[15], G.VERTICES[10]);
+		G.VERTICES[15].add_Undirect_Neighbor_0(G.VERTICES[15], G.VERTICES[9]);
+		G.VERTICES[15].add_Undirect_Neighbor_0(G.VERTICES[15], G.VERTICES[14]);
+		G.VERTICES[15].add_Undirect_Neighbor_0(G.VERTICES[15], G.VERTICES[12]);
+		
+		G.VERTICES[16] = gVert(16, 23, 43.084363, -77.679969);
+		roomNumbers[16] = "3430";
+		G.VERTICES[16].add_Undirect_Neighbor_0(G.VERTICES[16], G.VERTICES[15]);
+		G.VERTICES[16].add_Undirect_Neighbor_0(G.VERTICES[16], G.VERTICES[14]);
+	
+		G.VERTICES[17] = gVert(17, 23, 43.084356, -77.679883);
+		roomNumbers[17] = "3455";
+		G.VERTICES[17].add_Undirect_Neighbor_0(G.VERTICES[17], G.VERTICES[13]);
+		G.VERTICES[17].add_Undirect_Neighbor_0(G.VERTICES[16], G.VERTICES[17]);
+	
+		G.VERTICES[18] = gVert(18, 23, 43.084451, -77.679985);
+		roomNumbers[18] = "RND";
+		G.VERTICES[18].add_Undirect_Neighbor_0(G.VERTICES[16], G.VERTICES[18]);
+		
+		G.VERTICES[19] = gVert(19, 23, 43.084452,  -77.679899);
+		roomNumbers[19] = "Computational Studies";
+		G.VERTICES[19].add_Undirect_Neighbor_0(G.VERTICES[19], G.VERTICES[18]);
+		
+		G.VERTICES[20] = gVert(20, 23, 43.084456, -77.679822);
+		roomNumbers[20] = "Honors";
+		G.VERTICES[20].add_Undirect_Neighbor_0(G.VERTICES[19], G.VERTICES[20]);
+		G.VERTICES[20].add_Undirect_Neighbor_0(G.VERTICES[20], G.VERTICES[0]);
+		
+		G.VERTICES[21] = gVert(21, 23, 43.084398, -77.679824);
+		roomNumbers[21] = "Xerox";
+		G.VERTICES[21].add_Undirect_Neighbor_0(G.VERTICES[21], G.VERTICES[20]);
+		G.VERTICES[21].add_Undirect_Neighbor_0(G.VERTICES[21], G.VERTICES[0]);
+		G.VERTICES[21].add_Undirect_Neighbor_0(G.VERTICES[21], G.VERTICES[1]);
+	
+		G.VERTICES[22] = gVert(22, 23, 43.084337,  -77.679828);
+		roomNumbers[22] = "Adjunct Office";
+		G.VERTICES[22].add_Undirect_Neighbor_0(G.VERTICES[21], G.VERTICES[21]);
+		G.VERTICES[22].add_Undirect_Neighbor_0(G.VERTICES[21], G.VERTICES[17]);
+		G.VERTICES[22].add_Undirect_Neighbor_0(G.VERTICES[22], G.VERTICES[1]);
+		
+		System.out.println(G, roomNumbers);
 	}
 
 }
