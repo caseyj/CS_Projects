@@ -55,7 +55,7 @@ class gVert{
 
 	int NAME, MLIST = 0;
 	gVert[] NEIGHBORS;
-	double lat, lon, tardis;
+	double lat, lon, tardis, soFar;
 	
 	/**
 	 * 
@@ -68,6 +68,7 @@ class gVert{
 		lat = latitude;
 		lon = longitude;
 		tardis = 0;
+		soFar = 0;
 	}
 	
 	/**
@@ -134,13 +135,56 @@ public class Astar {
 	 * @return An array of parents of the respective path points taken
 	 */
 	public static int[] A_Star(Graph G, gVert Start, gVert Target){
+		//initialize the parents array, this will keep track of the path 
+		//	taken by A*
 		int[] parents = new int[G.SIZE];
+		
+		//Find the distance from all nodes to the target node and set their 
+		//	tardis variable to this number
 		for(int i = 0; i<G.SIZE; i++){
 			G.targetDistances[i] = distance(G.VERTICES, Target);
 			tardis = G.targetDistances[i];
 		}
+		
+		//initialize the comparator used for priority queue
 		Comparator<gVert> comparator = new NodeComparator();
+		
+		//initialize the priority queue
 		PriorityQueue<gVert> queue = new PriorityQueue<gVert>(G.SIZE, comparator);
+		
+		//current parent being operated on
+		gVert cParent = Start;
+		queue.add(Start);
+		
+		//A* running loop, will quit when queue is empty, 
+			//or return the parents of the nodes after successfully finding the
+			//target node
+		while(!queue.isEmpty()){
+			//lets make sure cParent is set
+			cParent = queue.remove();
+			
+			//loop through cParent's neighbors
+			for(int i = 0; i<cParent.MLIST; i++){
+				if(cParent == Start || parent[cParent.NEIGHBORS[i].NAME] != 0){
+					//the g(n) = distance between the parent and the current neighbor
+						//minus the distance already travelled between the parent
+					//the h(n) = the raw straight line distance between the current
+						//neighbor and the target point.
+					cParent.NEIGHBORS[i].tardis += (distance(cParent, cParent.NEIGHBORS[i]) - G.targetDistances[cParent.NAME]);
+					
+					//add this node to the queue and set it's parent to the
+						//name of the current node/ it's parent
+					queue.add(cParent.NEIGHBORS[i]);
+					parents[i] = cParent.NAME;
+					
+					//if this is the Target node, return the parent list
+					if(cParent.NEIGHBORS[i] == Target){
+						return parents;
+					}
+				}
+			}
+		}
+		return null;
 	}
 	
 
