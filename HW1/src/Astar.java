@@ -5,6 +5,11 @@
 import java.util.comparator;
 import java.util.PriorityQueue;
 
+/**
+ * 
+ * @author Casey
+ *
+ */
 class NodeComparator implements Comparator<gVert>{
 	@Override
 	public int compare(gVert x, gVert y){
@@ -192,8 +197,68 @@ public class Astar {
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		// TODO Auto-generated method stub
+		//initialize initial graph and the thing that keeps track of room numbers
+		Graph G = new Graph(23);
+		String[] roomNumbers = new String[23];
+		
+		G.VERTICES[0] = gVert(0, 23, 43.084450, -77.679715);
+		roomNumbers[0] = "3435";
+		
+		G.VERTICES[1] = gVert(1, 23, 43.084394, -77.679716);
+		roomNumbers[1] = "3445";
+		G.VERTICES[1].add_Undirect_Neighbor_0(G.VERTICES[1], G.VERTICES[0]);
+		
+		G.VERTICES[2] = gVert(2, 23, 43.084313, -77.679679);
+		roomNumbers[2] = "34551";
+		G.VERTICES[2].add_Undirect_Neighbor_0(G.VERTICES[1], G.VERTICES[2]);
+		
+		G.VERTICES[3] = gVert(3, 23, 43.084244, -77.679726);
+		roomNumbers[3] = "35151";
+		G.VERTICES[3].add_Undirect_Neighbor_0(G.VERTICES[3], G.VERTICES[2]);
+	
+		G.VERTICES[4] = gVert(4, 23, 43.084221, -77.679725);
+		roomNumbers[4] = "35171";
+		G.VERTICES[4].add_Undirect_Neighbor_0(G.VERTICES[3], G.VERTICES[4]);
 
+		G.VERTICES[5] = gVert(5, 23, 43.084200, -77.679726);
+		roomNumbers[5] = "35191";
+		G.VERTICES[5].add_Undirect_Neighbor_0(G.VERTICES[5], G.VERTICES[4]);
+		
+		G.VERTICES[6] = gVert(6, 23, 43.084192, -77.680066);
+		roomNumbers[6] = "3519";
+		
+		G.VERTICES[7] = gVert(7, 23, 43.084213, -77.680065);
+		roomNumbers[7] = "3517";
+		G.VERTICES[7].add_Undirect_Neighbor_0(G.VERTICES[6], G.VERTICES[7]);
+		
+		G.VERTICES[8] = gVert(8, 23, 43.084234, -77.680069);
+		roomNumbers[8] = "3515";
+		G.VERTICES[8].add_Undirect_Neighbor_0(G.VERTICES[8], G.VERTICES[7]);
+		
+		G.VERTICES[9] = gVert(9, 23, 43.084262,  -77.680076);
+		roomNumbers[9] = "3511";
+		G.VERTICES[9].add_Undirect_Neighbor_0(G.VERTICES[8], G.VERTICES[9]);
+		
+		G.VERTICES[10] = gVert(10, 23, 43.084288,  77.680068);
+		roomNumbers[10] = "3509";
+		G.VERTICES[10].add_Undirect_Neighbor_0(G.VERTICES[10], G.VERTICES[9]);
+		
+		G.VERTICES[11] = gVert(11, 23, 43.084214,  -77.679837);
+		roomNumbers[11] = "3610";
+		G.VERTICES[11].add_Undirect_Neighbor_0(G.VERTICES[11], G.VERTICES[5]);
+		G.VERTICES[11].add_Undirect_Neighbor_0(G.VERTICES[11], G.VERTICES[4]);
+		G.VERTICES[11].add_Undirect_Neighbor_0(G.VERTICES[11], G.VERTICES[3]);
+		
+		G.VERTICES[12] = gVert(12, 23, 43.084215, -77.679967);
+		roomNumbers[12] = "3510";
+		G.VERTICES[12].add_Undirect_Neighbor_0(G.VERTICES[12], G.VERTICES[6]);
+		G.VERTICES[12].add_Undirect_Neighbor_0(G.VERTICES[12], G.VERTICES[7]);
+		G.VERTICES[12].add_Undirect_Neighbor_0(G.VERTICES[12], G.VERTICES[8]);
+		
+		G.VERTICES[13] = gVert(13, 23, 43.084275, -77.679835);
+		roomNumbers[13] = "3600";
+		G.VERTICES[13].add_Undirect_Neighbor_0(G.VERTICES[13], G.VERTICES[6]);
+		G.VERTICES[13].add_Undirect_Neighbor_0(G.VERTICES[13], G.VERTICES[7]);
 	}
 
 }
