@@ -53,6 +53,73 @@ class gNode{
 }
 
 /**
+ * A standard stack implementation for graph ojects
+ * @author Casey
+ */
+class gStack{
+	/**
+	 * size are how many objects stored in the stack
+	 */
+	int size;
+	/**
+	 * The head is the primary unit being operated on in the stack object
+	 */
+	gNode head;
+	/**
+	 * The prototype stack object. Head are stacked items and size are how
+	 * many items are stacked.
+	 */
+	public gStack(){
+		head = null;
+		size = 0;
+	}
+	/**
+	 * push an existing gNode object onto an existing stack object.
+	 * This is the "low level" push function.
+	 * @param node
+	 */
+	public void push(gNode node){
+		//if the head is null just add the vertex to it.
+		if(this.head==null){
+			this.head = node;
+		}
+		else{
+			//otherwise point the node towards the current head and set this 
+			//		as the new head.
+			node.next = this.head;
+			this.head = node;
+		}
+		size++;
+	}
+	/**
+	 * push a vertex object onto an existing stack object
+	 * @param node the node to be added to the stack, a gVert object
+	 */
+	public void push(gVert node){
+		//just turn the vertex into a gNode and make this "easy"
+		//it would likely be better form to make a different function
+		//name for the "low level" function.
+		gNode Node = new gNode(node, null, null);
+		this.push(Node);
+	}
+	/**
+	 * Pops the top of the stack and provides the vertex on top.
+	 * @return The most recently added vertex.
+	 */
+	public gVert pop(){
+		//find the vertex object at the top of the stack
+		gVert pop = this.head.NAME;
+		//set  the head of the stack to be the next item and decrement the size
+		this.head = this.head.next;
+		this.size--;
+		return pop;
+	}
+}
+
+
+
+
+/**
  * 
  * @author Casey
  *
@@ -191,7 +258,23 @@ public class Astar {
 				}
 			}
 		}
+		//if there is no path return null
 		return null;
+	}
+	
+	public static void printPath(Graph G, gVert start, gVert finish, int[] path, String[] rooms){
+		int current = finish.NAME;
+		gStack stacker = new gStack();
+		while(current != start.NAME){
+			stacker.push(G.VERTICES[current]);
+			current = path[current];
+		}
+		stacker.push(start);
+		
+		while(stacker.size > 0){
+			gVert n = stacker.pop();
+			System.out.print(rooms[n.NAME]+ " ");
+		}
 	}
 	
 
@@ -310,8 +393,8 @@ public class Astar {
 		G.VERTICES[22].add_Undirect_Neighbor_0(G.VERTICES[22], G.VERTICES[1]);
 		
 		//Run A* and store the path contents.
-		int[] h= A_Star(G, G.VERTICES[0], G.VERTICES[15]);
-		System.out.println(Arrays.toString(h));
+		int[] h= A_Star(G, G.VERTICES[15], G.VERTICES[3]);
+		printPath(G, G.VERTICES[15], G.VERTICES[3], h, roomNumbers);
 	}
 
 }
