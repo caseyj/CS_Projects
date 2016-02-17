@@ -1,9 +1,15 @@
 /**
- * 
+ * @author Casey
+ * Title: Astar.java
+ * Language: Java
+ * Description: A working implementation of A* with working tests to simulate
+ * 		indoor GPS of the third floor of the GCCIS building at RIT
+ * Usage: > java Astar [location 1] [location 2]
  */
 
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.PriorityQueue;
 
 /**
@@ -262,6 +268,14 @@ public class Astar {
 		return null;
 	}
 	
+	/**
+	 * 
+	 * @param G
+	 * @param start
+	 * @param finish
+	 * @param path
+	 * @param rooms
+	 */
 	public static void printPath(Graph G, gVert start, gVert finish, int[] path, String[] rooms){
 		int current = finish.NAME;
 		gStack stacker = new gStack();
@@ -279,13 +293,28 @@ public class Astar {
 	
 
 	/**
-	 * @param args
+	 * @param args run with two arguments [0] and [1], 0 indicates the starting
+	 * 		room and 1 indicates the target room
+	 * 		if there are too few arguments the program exits.
+	 * 		if the room numbers do not exist, the program will error
 	 */
 	public static void main(String[] args) {
+		
+		if(args.length<2){
+			System.out.println("Please run as follows:");
+			System.out.println(">java Astar [Starting Room Name] [Target Room Name]");
+			System.exit(0);
+		}
+		
+		
 		//initialize initial graph and the thing that keeps track of room numbers
 		Graph G = new Graph(23);
 		String[] roomNumbers = new String[23];
 		
+		HashMap<String, Integer> FloorPlan = new HashMap<String, Integer>();
+		
+		//The following lines are hardcoded to create the map of the floor
+		//hardcoding begin
 		G.VERTICES[0] = new gVert(0, 23, 43.084450, -77.679715);
 		roomNumbers[0] = "3435";
 		
@@ -368,33 +397,47 @@ public class Astar {
 		G.VERTICES[17].add_Undirect_Neighbor_0(G.VERTICES[16], G.VERTICES[17]);
 	
 		G.VERTICES[18] = new gVert(18, 23, 43.084451, -77.679985);
-		roomNumbers[18] = "RND";
+		roomNumbers[18] = "RND".toLowerCase();
 		G.VERTICES[18].add_Undirect_Neighbor_0(G.VERTICES[16], G.VERTICES[18]);
 		
 		G.VERTICES[19] = new gVert(19, 23, 43.084452,  -77.679899);
-		roomNumbers[19] = "Computational Studies";
+		roomNumbers[19] = "Computational Studies".toLowerCase();
 		G.VERTICES[19].add_Undirect_Neighbor_0(G.VERTICES[19], G.VERTICES[18]);
 		
 		G.VERTICES[20] = new gVert(20, 23, 43.084456, -77.679822);
-		roomNumbers[20] = "Honors";
+		roomNumbers[20] = "Honors".toLowerCase();
 		G.VERTICES[20].add_Undirect_Neighbor_0(G.VERTICES[19], G.VERTICES[20]);
 		G.VERTICES[20].add_Undirect_Neighbor_0(G.VERTICES[20], G.VERTICES[0]);
 		
 		G.VERTICES[21] = new gVert(21, 23, 43.084398, -77.679824);
-		roomNumbers[21] = "Xerox";
+		roomNumbers[21] = "Xerox".toLowerCase();
 		G.VERTICES[21].add_Undirect_Neighbor_0(G.VERTICES[21], G.VERTICES[20]);
 		G.VERTICES[21].add_Undirect_Neighbor_0(G.VERTICES[21], G.VERTICES[0]);
 		G.VERTICES[21].add_Undirect_Neighbor_0(G.VERTICES[21], G.VERTICES[1]);
 	
 		G.VERTICES[22] = new gVert(22, 23, 43.084337,  -77.679828);
-		roomNumbers[22] = "Adjunct Office";
+		roomNumbers[22] = "Adjunct Office".toLowerCase();
 		G.VERTICES[22].add_Undirect_Neighbor_0(G.VERTICES[22], G.VERTICES[21]);
 		G.VERTICES[22].add_Undirect_Neighbor_0(G.VERTICES[22], G.VERTICES[17]);
 		G.VERTICES[22].add_Undirect_Neighbor_0(G.VERTICES[22], G.VERTICES[1]);
+		//hardcoded values end here
+		
+		//take in the names of each room and add it to the hashmap
+		for(int i = 0; i<G.SIZE; i++){
+			FloorPlan.put(roomNumbers[i], i);
+		}
+		
+		//intake parameters, first arg is start, second arg is target
+		String start = args[0].toLowerCase();
+		String finish = args[1].toLowerCase();
+		
+		int st = FloorPlan.get(start);
+		int fi = FloorPlan.get(finish);
 		
 		//Run A* and store the path contents.
-		int[] h= A_Star(G, G.VERTICES[15], G.VERTICES[3]);
-		printPath(G, G.VERTICES[15], G.VERTICES[3], h, roomNumbers);
+		int[] h= A_Star(G, G.VERTICES[st], G.VERTICES[fi]);
+		//print the path taken and quit out of java
+		printPath(G, G.VERTICES[st], G.VERTICES[fi], h, roomNumbers);
 	}
 
 }
