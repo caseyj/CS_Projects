@@ -33,28 +33,33 @@ int main(int argv, char **argc){
 			}
 		}	
 	}
-	Shell *SHELL = setShell(size, verb);
+	SHELL = setShell(size, verb);
 	while(1){
+		//if(feof(stdin)){
+		//	printf("\n");
+		//	break;
+		//}
 		int mem;
 		int MAX = 100;
 		char *intake = malloc(MAX * sizeof(char));
 		printf("mysh[%d]",SHELL->hist->current);
 		mem = getline(&intake, &MAX, stdin);
 		if(feof(stdin)){
-			quit(SHELL);
-			free(intake);
 			printf("\n");
 			break;
 		}
-		char **checkBud = runMachine(intake);
-		if(checkBud[0]!=NULL){
+		//fgets(intake, MAX, stdin);
+//		if(intake[0]==EOF){
+//			free(intake);
+//			quit(SHELL);
+//			break;
+//		}
+//		else{
 			run(intake, SHELL);
-		}
-		freeALL(checkBud);
+//		}
+		//char **tokens = runMachine(intake);
 		free(intake); 
 	}
 //	quit(SHELL);
 	return 0;
 }
-
-

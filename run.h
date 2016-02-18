@@ -35,32 +35,9 @@ int stringToInt(char *string, int stringLength, int val);
 */
 int sTInt(char *string);
 
-/**
-*VOID function that calls the appropriate internal action beased upon token input
-*
-*INPUT:
-*	char **tokens: the first token determines the command and the rest of the set 
-		are arguments
-*	int CMD: the predetermined command that is taken	
-*	Shell *s: the shell that is being worked with
-*
-**/
 void runInternally(char **tokens, int CMD);
 
-/**
-*VOID function that calls fork and exec on an external action 
-*
-*INPUT:
-*	char **CMD: the first token determines the file that will be exec'd the rest 
-		determine the actions
-*/
 void runExternally(char **CMD);
 
-/**
-*VOID calls all functions that run commands
-*
-*INPUT:
-*	char *CMD: the untouched user input with possible commands
-*	Shell *s: the shell object containing the user history.
-*/
-void run(char *CMD, Shell *s);
+
+void run(char *CMD, History *his);
