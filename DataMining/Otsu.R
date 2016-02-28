@@ -75,5 +75,5 @@ for(i in 1:(lenC4-1)){
 		bestMixedVar[2] <- i
 	}
 }
-sprintf("The best threshold is %s - %s and the best mixed variance is %s", c5$breaks[bestMixedVar[2]] ,c5$breaks[bestMixedVar[2]]+2 , bestMixedVar)
+sprintf("The best threshold is %s - %s and the best mixed variance is %s", c5$breaks[bestMixedVar[2]] ,c5$breaks[bestMixedVar[2]]+binSize , bestMixedVar)
 
