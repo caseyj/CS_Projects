@@ -3,7 +3,7 @@ args<-commandArgs(TRUE)
 if(length(args) <4){
 
 	print("Must be called: ")
-	stop(">:rscript HW02_Casey_John_program.r [dataFile] [binSize integer] [user defined min] [user defined max]")
+	stop(">:rscript Otsu.r [dataFile] [binSize integer] [user defined min] [user defined max]")
 }
 
 fileName <- args[1]
