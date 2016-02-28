@@ -1,6 +1,6 @@
 ######
 #Author: John Casey
-#Title: HW03_Casey_John_program.r
+#Title: BasiClassify.r
 #Language: R
 
 args<-commandArgs(TRUE)
@@ -8,7 +8,7 @@ args<-commandArgs(TRUE)
 if(length(args) <5){
 
 	print("Must be called: ")
-	stop(">:rscript HW03_Casey_John_program.r [dataFile] [data_Fileof_Unclassified_Data] [binSize integer] [user defined min] [user defined max]")
+	stop(">:rscript BasiClassify.r [dataFile] [data_Fileof_Unclassified_Data] [binSize integer] [user defined min] [user defined max]")
 }
 
 fileName <- args[1]
