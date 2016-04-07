@@ -27,6 +27,33 @@ class Tree():
         #print confusion Matrix 
         #last column has the class value
         pre = self.predict(testData[:-1])
+
+'''
+Finds and returns the predominant class of a list of datapoints
+    once the target index is given
+data->the data set given as a list
+targetIndex->the index of the classification variable
+returns->the target variable
+'''
+def PredomClass(data, targetIndex):
+    #init a new dictionary
+    classDict = dict()
+    #loop through all rows
+    for i in data:
+        #if we have already seen the class then increment
+        if i[targetIndex] as key in classDict:
+            classDict[key] = classDict[key] + 1
+        #otherwise create a new instance in the dictionary and set it to 1
+        else:
+            classDict[i[targetIndex]] = 1
+    #list the values
+    v = list(classDict.values())
+    #list the keys
+    k = list(classDict.keys())
+    #return the class with the highest number of seen instances
+    return k[v.index(max(v))]
+
+
     
 class decisionNde():
     def __init__(self, className):
@@ -46,6 +73,14 @@ class spltNde():
     def WhoAMI(self):
         return self.WhoAMI
 
-    def function():
+    def setBranch(self, tYpe, side, data):
+        if(side == 'r'):
+            if(tYpe == 's'):
+                #some method to generate the splitting criteria
+                #self.right = spltNde()
+            else:
+                #some method to generate which class this belongs to
+                #self.right = decisionNde()
+
         pass
 
