@@ -92,20 +92,38 @@ def PredomClass(data, targetIndex):
 '''
 def threshold(data):
     return 0
+'''
+Computes and returns the GINI for a single node for a split
+'''
+def Gini(data, targetIndex):
+    vals = list(classContent(data, targetIndex).values())
+    summa = sum(vals)
+    for i in vals:
+        i = i/summa
+        i = i**2
+    summa = sum(vals)
+    return 1 - summa
+
 
 '''
-Computes the GINI Index for a given split point
+Computes the Weighted GINI Index for a given split point
 '''
-def GINIDex(data, targetIndex, splitterVal, splitterDim):
+def WGINI(data, targetIndex, splitterVal, splitterDim):
     #ClassCounts = classContent(data, targetIndex)
-    splitList = list()
+    splitList1 = list()
+    splitList2 = list()
     for i in range(1:len(data)):
-        
-
-
-
-
-    return 0
+        if i[splitterDim] >= splitterVal:
+            splitList2.append(i)
+        else:
+            splitList1.append(i)
+    SP1 =  classContent(splitList1, targetIndex)
+    SP2 = classContent(splitList2, targetIndex)
+    vals1 = list(SP1.values())
+    vals2 = list(SP2.values())
+    w = (sum(vals1) / (len(data))*Gini(vals1)
+    w = w + (sum(vals2) / (len(data))*Gini(vals2)
+    return w
 
 '''
 '''
