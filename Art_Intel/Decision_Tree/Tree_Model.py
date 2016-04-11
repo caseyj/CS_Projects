@@ -28,6 +28,38 @@ class Tree():
         #last column has the class value
         pre = self.predict(testData[:-1])
 
+
+'''
+Finds and returns classes of a list of a given list of datapoints
+    once the target index is given
+data->the data set given as a list
+targetIndex->the index of the classification variable
+returns->a dictionary containing counts of classes
+'''
+def classContent(data, targetIndex):
+    #init a new dictionary
+    classDict = dict()
+    #loop through all rows
+    for i in data:
+        #if we have already seen the class then increment
+        if i[targetIndex] as key in classDict:
+            classDict[key] = classDict[key] + 1
+        #otherwise create a new instance in the dictionary and set it to 1
+        else:
+            classDict[i[targetIndex]] = 1
+    return classDict
+
+'''
+Counts and returns the sorted instances of a list of data
+data->the data set given as a list
+targetIndex->the index of the target values variable
+returns->a list of sorted data
+'''
+def CountSort(data, targetIndex):
+    classed = classContent(data, targetIndex)
+    datas = list(classed.keys())
+    return datas.sort()
+
 '''
 Finds and returns the predominant class of a list of datapoints
     once the target index is given
@@ -54,7 +86,29 @@ def PredomClass(data, targetIndex):
     return k[v.index(max(v))]
 
 
-    
+
+
+'''
+'''
+def threshold(data):
+    return 0
+
+'''
+Computes the GINI Index for a given split point
+'''
+def GINIDex(data, targetIndex, splitterVal, splitterDim):
+    #ClassCounts = classContent(data, targetIndex)
+    splitList = list()
+    for i in range(1:len(data)):
+        
+
+
+
+
+    return 0
+
+'''
+'''
 class decisionNde():
     def __init__(self, className):
         self.classy = className
@@ -63,6 +117,8 @@ class decisionNde():
     def WhoAMI(self):
         return self.WhoAMI
 
+'''
+'''
 class spltNde():
     def __init__(self, splitValue):
         self.split = splitValue
