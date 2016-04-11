@@ -135,3 +135,32 @@ clusterDist<-function(c1, c2){
   #return the result of the function call euclidean on findCentroid[1,2]
   return(euclidean(findCentroid(c1),findCentroid(c2), (length(c2)) ))
 }
+
+##################
+#Will output a K-Dists LIST
+#data->the dataset to get distances between
+#returns-> a list of vectors of distances between points
+##################
+kDist<-function(data){
+  #initialize a new empty list
+  vecto<-list()
+  #loop through everyone once
+  for(i in 1:nrow(data)){
+    #initialize a new vector
+    vego<-vector(mode = "numeric")
+    #loop through the other data points and check for euclidean dist
+    for(j in 1:nrow(data)){
+      if(i != j){
+        #add that distance to the vector
+        vego<-c(vego,euclidean(v1 = data[i,], v2 = data[j,]))
+      }
+    }
+    #sort and add vector to the list of vectors
+    vecto<-c(vecto, sort(vego))
+  }
+  return(vecto)
+}
+
+
+
+
