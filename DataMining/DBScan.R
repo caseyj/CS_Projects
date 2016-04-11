@@ -139,11 +139,12 @@ clusterDist<-function(c1, c2){
 ##################
 #Will output a K-Dists LIST
 #data->the dataset to get distances between
-#returns-> a list of vectors of distances between points
+#ktar->the Kth closest point for each point
+#returns-> a vector of distances between points
 ##################
-kDist<-function(data){
+kDist<-function(data, ktar){
   #initialize a new empty list
-  vecto<-list()
+  vecto<-vector(mode = "numeric")
   #loop through everyone once
   for(i in 1:nrow(data)){
     #initialize a new vector
@@ -152,15 +153,30 @@ kDist<-function(data){
     for(j in 1:nrow(data)){
       if(i != j){
         #add that distance to the vector
-        vego<-c(vego,euclidean(v1 = data[i,], v2 = data[j,]))
+        vego<-c(vego,euclidean(v1 = data[i,], v2 = data[j,], l = length(data[i,])))
       }
     }
     #sort and add vector to the list of vectors
-    vecto<-c(vecto, sort(vego))
+    sr<-sort(vego)
+    vecto<-c(vecto, vego[ktar])
   }
   return(vecto)
 }
 
-
-
+##################
+#Will create a plot of points for distances between a start and end value
+#data->the dataset to get distances between
+#ktar->the Kth closest point for each point
+#returns-> a vector of distances between points
+##################
+kDistPlot<-function(data, start, end){
+  vec<-kDist(data, start)
+  plot.new()
+  colors = c("red", "green","blue","magenta", "black", "gray", "brown", "orange", "pink", "cyan")
+  points(sort(vec), col = colors[1], xlab = "index", ylab = "Distance betweeen star and kth closest neighbor")
+  for(i in (start+1):end){
+    vec<-kDist(data, i)
+    points(sort(vec), col = colors[i])
+  }
+}
 
