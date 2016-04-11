@@ -89,9 +89,29 @@ def PredomClass(data, targetIndex):
 
 
 '''
+iterative algorithm, that will find the best split point at a given decision node
+iterates through each given dimension to find where the best split will be
+returns a list with the first index the weighted mixed GINI, the second index is the split dimension
 '''
-def threshold(data):
-    return 0
+def threshold(data, targetIndex):
+    splitPoints = list(sys.maxint)
+    splitDim = -1
+    itera = list()
+    itera.append(CountSort(data, 0))
+    itera.append(CountSort(data, 1))
+    itera.append(CountSort(data, 2))
+    itera.append(CountSort(data, 3))
+    itera.append(CountSort(data, 4))
+    for i in range(0,len(itera)):
+        for j in range(0, len(itera[i])):
+            mG = WGINI(data, targetIndex, itera[i][j], i)
+            if mG<splitPoints:
+                splitPoints = mG
+                splitDim = i
+    report = list()
+    report.append(min(splitPoints))
+    report.append(splitPoints.index(min(report)))
+    return report
 '''
 Computes and returns the GINI for a single node for a split
 '''
@@ -138,11 +158,12 @@ class decisionNde():
 '''
 '''
 class spltNde():
-    def __init__(self, splitValue):
+    def __init__(self, splitValue, splitDim):
         self.split = splitValue
+        self.splitDim = splitDim
         self.left = None
         self.right = None
-        self.WhoAMI
+        self.WhoAMI= 'd'
 
     def WhoAMI(self):
         return self.WhoAMI
