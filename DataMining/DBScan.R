@@ -142,7 +142,7 @@ clusterDist<-function(c1, c2){
 #ktar->the Kth closest point for each point
 #returns-> a vector of distances between points
 ##################
-kDist<-function(data, ktar){
+kDist<-function(data, ktar, size){
   #initialize a new empty list
   vecto<-vector(mode = "numeric")
   #loop through everyone once
@@ -153,7 +153,7 @@ kDist<-function(data, ktar){
     for(j in 1:nrow(data)){
       if(i != j){
         #add that distance to the vector
-        vego<-c(vego,euclidean(v1 = data[i,], v2 = data[j,], l = length(data[i,])))
+        vego<-c(vego,euclidean(v1 = data[i,], v2 = data[j,], l = size))
       }
     }
     #sort and add vector to the list of vectors
@@ -178,25 +178,43 @@ kDistPlot<-function(data, start, end){
     points(sort(vec), col = colors[i])
   }
 }
+
+##################
 #creates and adds a classification for every data point,
 # based upon a selected epsilon
+#data->the dataset we wish to use, with a column with distances to kth 
+# closest member
+#Epsilon->The inflection point chosen
+#vectorrayIndex->the index of the distance column
+#returns->a vector of 
 DBClassify<-function(data, Epsilon, vectorrayIndex){
+  #empty character vector init
   vecto = vector(mode = "character")
+  #iterate through the rows
   for(i in (1:nrow(data))){
+    #if we find a core point, turn this to true so we dont trigger the other if
     hit = FALSE
+    #if core point
     if(data[i,vectorrayIndex]<Epsilon){
+      #add a C to the character vector and hit becomes true
       vecto = c(vecto, 'c')
       hit = TRUE
     }
+    #otherwise
     if(!hit){
+      #if its equal to our selected epsilon
       if(data[i,vectorrayIndex]==Epsilon){
+        #add a B to the character vector
         vecto = c(vecto, 'b')
       }
+      #otherwise
       else{
+        #add an N, its noise
         vecto = c(vecto, 'N')
       }
     }
   }
+  #return that vector
   return(vecto)
 }
 
