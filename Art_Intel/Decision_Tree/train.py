@@ -6,8 +6,9 @@ import sys
 
 storage = list()
 with open('data.csv', 'rb') as inpu:
-	inputData = csv.reader('data.csv')
-	storage.append(next(inputData))
+	inputData = csv.reader(inpu)
+	inputData.next()
+
 	for row in inputData:
 		row[0] = float(row[0])
 		row[1] = float(row[1])
@@ -17,7 +18,7 @@ with open('data.csv', 'rb') as inpu:
 		storage.append(row)
 #can use any package to read the file
 model =  Tree()
-model.train()
+model.train(storage)
 with open('model.pkl','wb') as h:
     pickle.load(model,h)
 
