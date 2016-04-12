@@ -2,7 +2,6 @@ import pickle
 import csv
 import numpy as np
 from Tree_Model import Tree
-import sys
 
 storage = list()
 with open('data.csv', 'rb') as inpu:
