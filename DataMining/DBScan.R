@@ -171,12 +171,34 @@ kDist<-function(data, ktar){
 ##################
 kDistPlot<-function(data, start, end){
   vec<-kDist(data, start)
-  plot.new()
-  colors = c("red", "green","blue","magenta", "black", "gray", "brown", "orange", "pink", "cyan")
   points(sort(vec), col = colors[1], xlab = "index", ylab = "Distance betweeen star and kth closest neighbor")
+  colors = c("red", "green","blue","magenta", "black", "gray", "brown", "orange", "pink", "cyan")
   for(i in (start+1):end){
     vec<-kDist(data, i)
     points(sort(vec), col = colors[i])
   }
 }
+#creates and adds a classification for every data point,
+# based upon a selected epsilon
+DBClassify<-function(data, Epsilon, vectorrayIndex){
+  vecto = vector(mode = "character")
+  for(i in (1:nrow(data))){
+    hit = FALSE
+    if(data[i,vectorrayIndex]<Epsilon){
+      vecto = c(vecto, 'c')
+      hit = TRUE
+    }
+    if(!hit){
+      if(data[i,vectorrayIndex]==Epsilon){
+        vecto = c(vecto, 'b')
+      }
+      else{
+        vecto = c(vecto, 'N')
+      }
+    }
+  }
+  return(vecto)
+}
+
+
 
