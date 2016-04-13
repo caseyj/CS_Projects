@@ -218,5 +218,29 @@ DBClassify<-function(data, Epsilon, vectorrayIndex){
   return(vecto)
 }
 
-
+#Runs DBScan algorithm, with a given epsilon
+# Assumes data already has been run through a classification routine
+DBScanner<-function(data, Epsilon, rawSize, classifyLoc){
+  #remove any noise by classification
+  cleanDat<-subset(data, data[[classifyLoc]]!='N')
+  #generate a cluster list
+  clustering<-generateClusters(RowsofData = cleanDat)
+  for(i in 1:(nrow(cleanDat)-1)){
+    #current row comparing use
+    current<-cleanDat[i,]
+    #loop through all 
+    for(j in ((i+1):nrow(cleanDat))){
+      #get the euclidean distance between the two current comp points
+      dist = euclidean(v1 = cleanDat[i,], v2 = cleanDat[j,], l = rawSize)
+      #if its less than or equal to Epsilon, we create an edge between the two
+      if(dist<=Epsilon){
+        idI<-findClId(clNum = i)
+        idJ<-findClId(clNum = j)
+        clustering[[idI]] = c(clustering[[idI]], j)
+        clustering[[idJ]] = c(clustering[[idJ]], i)
+      }
+    }
+  }
+  return(clustering)
+}
 
