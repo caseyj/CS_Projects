@@ -1,5 +1,5 @@
 
-
+import sys
 class Tree():
     
     def __init__(self):
@@ -10,7 +10,7 @@ class Tree():
         self.createTree(trainData)
     
     def createTree(self,trainData):
-        self.treemodel=None
+        self.treemodel= TreeMaker(trainData, 5)
         #create the tree
 
     def predict(self,testData):
@@ -42,8 +42,8 @@ def classContent(data, targetIndex):
     #loop through all rows
     for i in data:
         #if we have already seen the class then increment
-        if i[targetIndex] as key in classDict:
-            classDict[key] = classDict[key] + 1
+        if i[targetIndex] in classDict:
+            classDict[i[targetIndex]] = classDict[i[targetIndex]] + 1
         #otherwise create a new instance in the dictionary and set it to 1
         else:
             classDict[i[targetIndex]] = 1
@@ -58,6 +58,7 @@ returns->a list of sorted data
 def CountSort(data, targetIndex):
     classed = classContent(data, targetIndex)
     datas = list(classed.keys())
+    print datas
     return datas.sort()
 
 '''
@@ -73,8 +74,8 @@ def PredomClass(data, targetIndex):
     #loop through all rows
     for i in data:
         #if we have already seen the class then increment
-        if i[targetIndex] as key in classDict:
-            classDict[key] = classDict[key] + 1
+        if i[targetIndex] in classDict:
+            classDict[i[targetIndex]] = classDict[i[targetIndex]] + 1
         #otherwise create a new instance in the dictionary and set it to 1
         else:
             classDict[i[targetIndex]] = 1
@@ -93,7 +94,7 @@ def GenSplit(data, splitterVal, splitterDim):
     splitList1 = list()
     splitList2 = list()
     #iterate once through all of the data
-    for i in range(1:len(data)):
+    for i in range(1,len(data)):
         #if data at the split location is greater than the splitterVal
         ##append to list of the larger values
         if i[splitterDim] >= splitterVal:
@@ -112,13 +113,15 @@ def GenSplit(data, splitterVal, splitterDim):
 Computes and returns the GINI for a single node for a split
 '''
 def Gini(data, targetIndex):
-    vals = list(classContent(data, targetIndex).values())
+    c = classContent(data, targetIndex)
+    vals = list(c.values())
     summa = sum(vals)
+    collect = float(0)
     for i in vals:
-        i = i/summa
-        i = i**2
-    summa = sum(vals)
-    return 1 - summa
+        b = float(i)/summa
+        b = b**2
+        collect = float(collect) + b
+    return float(1) - float(collect)
 
 
 '''
@@ -134,8 +137,8 @@ def WGINI(data, targetIndex, splitterVal, splitterDim):
     vals1 = list(SP1.values())
     vals2 = list(SP2.values())
     #calculate weighted mixed GINI
-    w = (sum(vals1) / (len(data))*Gini(vals1)
-    w = w + (sum(vals2) / (len(data))*Gini(vals2)
+    w = (sum(vals1) / (len(data)))*Gini(vals1)
+    w = w + (sum(vals2) / (len(data)))*Gini(vals2)
     return w
 
 '''
@@ -155,6 +158,7 @@ def threshold(data, targetIndex):
     itera.append(CountSort(data, 2))
     itera.append(CountSort(data, 3))
     itera.append(CountSort(data, 4))
+    print itera
     #iterate through each dimension we are concerned about
     for i in range(0,len(itera)):
         #iterate over each of the values in the current dimension
@@ -193,23 +197,13 @@ class spltNde():
     def WhoAMI(self):
         return self.WhoAMI
 
-    def setBranch(self, tYpe, side, data):
-        if(side == 'r'):
-            if(tYpe == 's'):
-                #some method to generate the splitting criteria
-                threshold
-                self.right = spltNde()
-            else:
-                #some method to generate which class this belongs to
-                #self.right = decisionNde()
-
-        pass
 
 '''
 returns the root node for a given Tree_Model dataset
 '''
 def TreeMaker(data, targetIndex):
-    currentWeight = Gini(data, threshold)
+    currentWeight = Gini(data, targetIndex)
+    print currentWeight
     if currentWeight <= 0.1:
         return decisionNde(PredomClass(data, targetIndex), data)
     else:
