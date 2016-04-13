@@ -218,12 +218,30 @@ DBClassify<-function(data, Epsilon, vectorrayIndex){
   return(vecto)
 }
 
+#finds all neighbors of a given dataPoint and returns their indicies in a vector
+checkArea<-function(Epsilon, dataSet, dataIndex, rawSize){
+  #init new empty vector
+  vecto<-vector(mode = "numeric")
+  #loop through data points
+  for(i in 1:nrow(dataSet)){
+    #find distance between current row, and comparison row
+    dist<-dist = euclidean(v1 = dataSet[i,], v2 = dataSet[dataIndex,], l = rawSize)
+    #if the distance is less than epsilon, and not the same dataPoint
+    if(dist<=Epsilon && dist!=0){
+      #add it to the returning vector
+      vecto<-c(vecto, dist)
+    }
+  }
+  return(dist)
+}
+
 #Runs DBScan algorithm, with a given epsilon
 # Assumes data already has been run through a classification routine
-DBScanner<-function(data, Epsilon, rawSize, classifyLoc){
+DBScanner<-function(data, Epsilon, rawSize, classifyLoc, minPts=4){
   #remove any noise by classification
   cleanDat<-subset(data, data[[classifyLoc]]!='N')
   #generate a cluster list
+  
   clustering<-generateClusters(RowsofData = cleanDat)
   for(i in 1:(nrow(cleanDat)-1)){
     #current row comparing use
@@ -234,13 +252,22 @@ DBScanner<-function(data, Epsilon, rawSize, classifyLoc){
       dist = euclidean(v1 = cleanDat[i,], v2 = cleanDat[j,], l = rawSize)
       #if its less than or equal to Epsilon, we create an edge between the two
       if(dist<=Epsilon){
+        
         idI<-findClId(clNum = i)
         idJ<-findClId(clNum = j)
+        #add the ID's together
         clustering[[idI]] = c(clustering[[idI]], j)
         clustering[[idJ]] = c(clustering[[idJ]], i)
+        
       }
     }
   }
   return(clustering)
 }
 
+
+#distills an adjacency list of cluster connections to a cluster list
+reduceToClusters<-function(clustering){
+  toRemove<-vector(mode = "numeric")
+  
+}
