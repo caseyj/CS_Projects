@@ -229,7 +229,7 @@ checkArea<-function(Epsilon, dataSet, dataIndex, rawSize){
     #if the distance is less than epsilon, and not the same dataPoint
     if(dist<=Epsilon && dist!=0){
       #add it to the returning vector
-      vecto<-c(vecto, dist)
+      vecto<-c(vecto, i)
     }
   }
   return(vecto)
@@ -242,7 +242,10 @@ FindCluster<-function(index, neighborhood, data, rawSize, Epsilon, MinPoints, cl
   #begin looping through neighbors
   for(i in 1:length(neighborhood)){
     #check if seen
+    #print(neighborhood[i])
+    
     pointNow<-data[neighborhood[i],]
+    #print(pointNow)
     if(pointNow$seen==0){
       pointNow$seen = 1
       #find its neighbors and add them to neighborlist
@@ -286,16 +289,15 @@ DBScanner<-function(data, Epsilon, rawSize, minPts=4, classifyLoc){
       #mark as seen
       data[i,]$seen <-1
       #get its immediate neighbors
-      neighborHood<-checkArea(Epsilon = Epsilon, dataSet = data, rawSize = rawSize, dataIndex = i)
+      neighborhood<-checkArea(Epsilon = Epsilon, dataSet = data, rawSize = rawSize, dataIndex = i)
       #if it doesnt really have enough neighbors, its noise
-      print(neighborHood)
-      if(length(neighborHood)<minPts){
+      if(length(neighborhood)<minPts){
         data[i,classifyLoc] = 'N'
         print("hit")
       }
       #otherwise
       else{
-        print(neighborhood)
+        #print(neighborhood)
         #generate new cluster here!
           v<-FindCluster(index = i, neighborhood = neighborhood, data = data, Epsilon = Epsilon, MinPoints = minPts, clusterNum = clusterNum, rawSize)
         print(v)
