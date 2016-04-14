@@ -259,15 +259,20 @@ FindCluster<-function(index, neighborhood, data, rawSize, Epsilon, MinPoints, cl
             neighborhood<-c(neighborhood, nabes[i])
           }
         }
+        #check if in cluster already
+        if(data[neighborhood[i],]$member==0){
+          #add clusterNumber to dataSet
+          data[neighborhood[i],]$member = clusterNum
+          #add row to cluster
+          newClust<-c(newClust, curNabe)
+        }
+      }
+      else{
+        data[i,]$class = 'N'
+        data[i,]$seen = 1
       }
     }
-    #check if in cluster already
-    if(data[neighborhood[i],]$member==0){
-      #add clusterNumber to dataSet
-      data[neighborhood[i],]$member = clusterNum
-      #add row to cluster
-      newClust<-c(newClust, curNabe)
-    }
+    
   }
   #return both the new data and the cluster
   ret<-list()
@@ -281,7 +286,7 @@ FindCluster<-function(index, neighborhood, data, rawSize, Epsilon, MinPoints, cl
 DBScanner<-function(data, Epsilon, rawSize, minPts=4){
   clustering = list()
   clusterNumber = 1
-  
+  #set seen as 0, member as 0, and character as empty
   data$seen<-vector(mode = "numeric", length = nrow(data))
   data$class<-vector(mode = "character", length = nrow(data))
   data$member<-vector(mode = "numeric", length = nrow(data))
@@ -305,11 +310,11 @@ DBScanner<-function(data, Epsilon, rawSize, minPts=4){
         #generate new cluster here!
         v<-FindCluster(index = i, neighborhood = neighborhood, data = data, Epsilon = Epsilon, MinPoints = minPts, clusterNum = clusterNumber, rawSize)
         #if the cluster is not larger than the minimum number of points required, igore 
-        if(length(v[[1]])>=minPts){
+        #if(length(v[[1]])>=minPts){
           #otherwise, add it to the clusterList!
           clustering<-c(clustering, list(v[[1]]))
           clusterNumber = clusterNumber+1
-        }
+        #}
         data = v[[2]]
       }
     }
