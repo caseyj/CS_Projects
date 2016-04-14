@@ -235,30 +235,62 @@ checkArea<-function(Epsilon, dataSet, dataIndex, rawSize){
   return(dist)
 }
 
+#returns an entire cluster!
+FindCluster<-function(index, neighborhood, data, rawSize, Epsilon, MinPoints, clusterNum){
+  newClust<-data.frame(row.names = names(data), data[index,])
+  #begin looping through neighbors
+  for(i in 1:length(neighborhood)){
+    #check if seen
+    pointNow<-data[i,]
+    if(pointNow$seen==0){
+      pointNow$seen = 1
+      #find its neighbors and add them to neighborlist
+      nabes<-checkArea(Epsilon = Epsilon, dataSet = data, rawSize = rawSize, dataIndex = i)
+      #if the point is a viable corePt
+      if(length(nabes)>=MinPoints){
+        for(j in 1:length(nabes)){
+          if(!is.element(nabes[i], neighborhood)){
+            neighborhood<-c(neighborhood, nabes[i])
+          }
+        }
+        neighborhood<-sort(neighborhood)
+      }
+    }
+    #check if in cluster already
+    if(pointNow$member==0){
+      #add clusterNumber to dataSet
+      pointNow$member = clusterNum
+      #add row to cluster
+      newClust<-rbind(newClust, pointNow)
+    }
+  }
+  return(newClust)
+}
+
 #Runs DBScan algorithm, with a given epsilon
 # Assumes data already has been run through a classification routine
 DBScanner<-function(data, Epsilon, rawSize, classifyLoc, minPts=4){
-  #remove any noise by classification
-  cleanDat<-subset(data, data[[classifyLoc]]!='N')
-  #generate a cluster list
-  
-  clustering<-generateClusters(RowsofData = cleanDat)
-  for(i in 1:(nrow(cleanDat)-1)){
-    #current row comparing use
-    current<-cleanDat[i,]
-    #loop through all 
-    for(j in ((i+1):nrow(cleanDat))){
-      #get the euclidean distance between the two current comp points
-      dist = euclidean(v1 = cleanDat[i,], v2 = cleanDat[j,], l = rawSize)
-      #if its less than or equal to Epsilon, we create an edge between the two
-      if(dist<=Epsilon){
-        
-        idI<-findClId(clNum = i)
-        idJ<-findClId(clNum = j)
-        #add the ID's together
-        clustering[[idI]] = c(clustering[[idI]], j)
-        clustering[[idJ]] = c(clustering[[idJ]], i)
-        
+  clustering = list()
+  clusterNumber = 1
+  data$seen<-vector(mode = "numeric", length = nrow(data))
+  data$member<-vector(mode = "numeric", length = nrow(data))
+  #loop through the data
+  for(i in 1:nrow(data)){
+    #if we havent seen this point yet
+    if(data[i,]$seen==0){
+      #mark as seen
+      data[i,]$seen <-1
+      #get its immediate neighbors
+      neighborHood<-checkArea(Epsilon = Epsilon, dataSet = data, rawSize = rawSize, dataIndex = i)
+      #if it doesnt really have enough neighbors, its noise
+      if(length(neighborHood<minPts)){
+        data[i,classifyLoc] = 'N'
+      }
+      #otherwise
+      else{
+        #generate new cluster here!
+        clustering<-c(clustering, FindCluster(index = i, neighborhood = neighborhood, data = data, Epsilon = Epsilon, MinPoints = minPts, clusterNum = clusterNum, rawSize))
+        clusterNumber = clusterNumber+1
       }
     }
   }
