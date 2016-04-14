@@ -235,7 +235,7 @@ checkArea<-function(Epsilon, dataSet, dataIndex, rawSize){
   return(vecto)
 }
 
-#returns an entire cluster!
+#returns an entire cluster and vetted data set via a list
 FindCluster<-function(index, neighborhood, data, rawSize, Epsilon, MinPoints, clusterNum){
   #print(neighborhood)
   newClust<-vector(mode = "numeric")
@@ -245,24 +245,20 @@ FindCluster<-function(index, neighborhood, data, rawSize, Epsilon, MinPoints, cl
   for(i in 1:length(neighborhood)){
     #check if seen
     curNabe<-neighborhood[i] 
-    
-    
-    #print(data[curNabe,]
     if(data[curNabe,]$seen==0){
+      #set it as seen
       data[curNabe,]$seen = 1
       #find its neighbors and add them to neighborlist
       nabes<-checkArea(Epsilon = Epsilon, dataSet = data, rawSize = rawSize, dataIndex = i)
-      
       #if the point is a viable corePt
       if(length(nabes)>=MinPoints){
-  
+        #iterate through each neighbor and add uniques to the neighborhood
+        # queue
         for(j in 1:length(nabes)){
-          
           if(is.element(el = nabes[j], set = neighborhood) == FALSE){
             neighborhood<-c(neighborhood, nabes[i])
           }
         }
-        #neighborhood<-sort(neighborhood)
       }
     }
     #check if in cluster already
@@ -270,10 +266,10 @@ FindCluster<-function(index, neighborhood, data, rawSize, Epsilon, MinPoints, cl
       #add clusterNumber to dataSet
       data[neighborhood[i],]$member = clusterNum
       #add row to cluster
-      #print(curNabe)
       newClust<-c(newClust, curNabe)
     }
   }
+  #return both the new data and the cluster
   ret<-list()
   ret<-c(ret, list(newClust))
   ret<-c(ret, list(data))
@@ -282,7 +278,7 @@ FindCluster<-function(index, neighborhood, data, rawSize, Epsilon, MinPoints, cl
 
 #Runs DBScan algorithm, with a given epsilon
 # Assumes data already has been run through a classification routine
-DBScanner<-function(data, Epsilon, rawSize, minPts=4, classifyLoc){
+DBScanner<-function(data, Epsilon, rawSize, minPts=4){
   clustering = list()
   clusterNumber = 1
   
@@ -300,18 +296,20 @@ DBScanner<-function(data, Epsilon, rawSize, minPts=4, classifyLoc){
       neighborhood<-checkArea(Epsilon = Epsilon, dataSet = data, rawSize = rawSize, dataIndex = i)
       #if it doesnt really have enough neighbors, its noise
       if(length(neighborhood)<minPts){
-        data[i,classifyLoc] = 'N'
+        data[i,]$class = 'N'
         data[i,]$seen = 1
         
       }
       #otherwise
       else{
-        #print(neighborhood)
         #generate new cluster here!
         v<-FindCluster(index = i, neighborhood = neighborhood, data = data, Epsilon = Epsilon, MinPoints = minPts, clusterNum = clusterNumber, rawSize)
-        #print(v)
-        clustering<-c(clustering, list(v[[1]]))
-        clusterNumber = clusterNumber+1
+        #if the cluster is not larger than the minimum number of points required, igore 
+        if(length(v[[1]])>=minPts){
+          #otherwise, add it to the clusterList!
+          clustering<-c(clustering, list(v[[1]]))
+          clusterNumber = clusterNumber+1
+        }
         data = v[[2]]
       }
     }
@@ -321,15 +319,18 @@ DBScanner<-function(data, Epsilon, rawSize, minPts=4, classifyLoc){
 
 #Creates a 3d Scatter plot of the DB Scan results
 plotDBscan<-function(vectorList, data){
+  #a vector of the namespace colors
   colors = c("red", "green","blue","magenta", "black", "gray", "brown", "orange", "pink", "cyan")
+  #lets add the first cluster
   firstSet<-vectorList[[1]]
   points3D(x = data[firstSet[1],1], y = data[firstSet[1],2], z = data[firstSet[1],3], col=colors[1], xlim=c(0,10), ylim=c(0,10), zlim=c(0,10), main = "Clusters")
   for(i in 2:length(firstSet)){
     points3D(x = data[firstSet[i],1], y = data[firstSet[i],2], z = data[firstSet[i],3], col=colors[1],add=TRUE)
   }
+  #loop through the rest of the clusters and add them to the plot
   for(i in 2:length(vectorList)){
     for(h in 1:length(vectorList[[i]])){
-      points3D(x = data[vectorList[[i]][h],1], y = data[vectorList[[i]][h],2], z = data[vectorList[[i]][h],3], col=colors[i], add=TRUE)
+      points3D(x = data[vectorList[[i]][h],1], y = data[vectorList[[i]][h],2], z = data[vectorList[[i]][h],3], col=colors[i%%length(colors)], add=TRUE)
     }
   }
 }
