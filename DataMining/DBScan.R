@@ -225,27 +225,29 @@ checkArea<-function(Epsilon, dataSet, dataIndex, rawSize){
   #loop through data points
   for(i in 1:nrow(dataSet)){
     #find distance between current row, and comparison row
-    dist<-dist = euclidean(v1 = dataSet[i,], v2 = dataSet[dataIndex,], l = rawSize)
+    dist = euclidean(v1 = dataSet[i,], v2 = dataSet[dataIndex,], l = rawSize)
     #if the distance is less than epsilon, and not the same dataPoint
     if(dist<=Epsilon && dist!=0){
       #add it to the returning vector
       vecto<-c(vecto, dist)
     }
   }
-  return(dist)
+  return(vecto)
 }
 
 #returns an entire cluster!
 FindCluster<-function(index, neighborhood, data, rawSize, Epsilon, MinPoints, clusterNum){
-  newClust<-data.frame(row.names = names(data), data[index,])
+  print(neighborhood)
+  newClust<-index
   #begin looping through neighbors
   for(i in 1:length(neighborhood)){
     #check if seen
-    pointNow<-data[i,]
+    pointNow<-data[neighborhood[i],]
     if(pointNow$seen==0){
       pointNow$seen = 1
       #find its neighbors and add them to neighborlist
       nabes<-checkArea(Epsilon = Epsilon, dataSet = data, rawSize = rawSize, dataIndex = i)
+      
       #if the point is a viable corePt
       if(length(nabes)>=MinPoints){
         for(j in 1:length(nabes)){
@@ -261,7 +263,7 @@ FindCluster<-function(index, neighborhood, data, rawSize, Epsilon, MinPoints, cl
       #add clusterNumber to dataSet
       pointNow$member = clusterNum
       #add row to cluster
-      newClust<-rbind(newClust, pointNow)
+      newClust<-C(newClust, neighborhood[i])
     }
   }
   return(newClust)
@@ -269,27 +271,35 @@ FindCluster<-function(index, neighborhood, data, rawSize, Epsilon, MinPoints, cl
 
 #Runs DBScan algorithm, with a given epsilon
 # Assumes data already has been run through a classification routine
-DBScanner<-function(data, Epsilon, rawSize, classifyLoc, minPts=4){
+DBScanner<-function(data, Epsilon, rawSize, minPts=4, classifyLoc){
   clustering = list()
   clusterNumber = 1
+  
   data$seen<-vector(mode = "numeric", length = nrow(data))
+  data$class<-vector(mode = "character", length = nrow(data))
   data$member<-vector(mode = "numeric", length = nrow(data))
   #loop through the data
   for(i in 1:nrow(data)){
     #if we havent seen this point yet
+    neighborhood<-vector(mode = "numeric")
     if(data[i,]$seen==0){
       #mark as seen
       data[i,]$seen <-1
       #get its immediate neighbors
       neighborHood<-checkArea(Epsilon = Epsilon, dataSet = data, rawSize = rawSize, dataIndex = i)
       #if it doesnt really have enough neighbors, its noise
-      if(length(neighborHood<minPts)){
+      print(neighborHood)
+      if(length(neighborHood)<minPts){
         data[i,classifyLoc] = 'N'
+        print("hit")
       }
       #otherwise
       else{
+        print(neighborhood)
         #generate new cluster here!
-        clustering<-c(clustering, FindCluster(index = i, neighborhood = neighborhood, data = data, Epsilon = Epsilon, MinPoints = minPts, clusterNum = clusterNum, rawSize))
+          v<-FindCluster(index = i, neighborhood = neighborhood, data = data, Epsilon = Epsilon, MinPoints = minPts, clusterNum = clusterNum, rawSize)
+        print(v)
+        clustering<-c(clustering, v)
         clusterNumber = clusterNumber+1
       }
     }
