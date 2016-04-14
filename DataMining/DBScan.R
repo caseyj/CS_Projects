@@ -237,39 +237,47 @@ checkArea<-function(Epsilon, dataSet, dataIndex, rawSize){
 
 #returns an entire cluster!
 FindCluster<-function(index, neighborhood, data, rawSize, Epsilon, MinPoints, clusterNum){
-  print(neighborhood)
-  newClust<-index
+  #print(neighborhood)
+  newClust<-vector(mode = "numeric")
+  newClust<-c(newClust, index)
+  data[index,]$member = clusterNum
   #begin looping through neighbors
   for(i in 1:length(neighborhood)){
     #check if seen
-    #print(neighborhood[i])
+    curNabe<-neighborhood[i] 
     
-    pointNow<-data[neighborhood[i],]
-    #print(pointNow)
-    if(pointNow$seen==0){
-      pointNow$seen = 1
+    
+    #print(data[curNabe,]
+    if(data[curNabe,]$seen==0){
+      data[curNabe,]$seen = 1
       #find its neighbors and add them to neighborlist
       nabes<-checkArea(Epsilon = Epsilon, dataSet = data, rawSize = rawSize, dataIndex = i)
       
       #if the point is a viable corePt
       if(length(nabes)>=MinPoints){
+  
         for(j in 1:length(nabes)){
-          if(!is.element(nabes[i], neighborhood)){
+          
+          if(is.element(el = nabes[j], set = neighborhood) == FALSE){
             neighborhood<-c(neighborhood, nabes[i])
           }
         }
-        neighborhood<-sort(neighborhood)
+        #neighborhood<-sort(neighborhood)
       }
     }
     #check if in cluster already
-    if(pointNow$member==0){
+    if(data[neighborhood[i],]$member==0){
       #add clusterNumber to dataSet
-      pointNow$member = clusterNum
+      data[neighborhood[i],]$member = clusterNum
       #add row to cluster
-      newClust<-C(newClust, neighborhood[i])
+      #print(curNabe)
+      newClust<-c(newClust, curNabe)
     }
   }
-  return(newClust)
+  ret<-list()
+  ret<-c(ret, list(newClust))
+  ret<-c(ret, list(data))
+  return(ret)
 }
 
 #Runs DBScan algorithm, with a given epsilon
@@ -293,25 +301,35 @@ DBScanner<-function(data, Epsilon, rawSize, minPts=4, classifyLoc){
       #if it doesnt really have enough neighbors, its noise
       if(length(neighborhood)<minPts){
         data[i,classifyLoc] = 'N'
-        print("hit")
+        data[i,]$seen = 1
+        
       }
       #otherwise
       else{
         #print(neighborhood)
         #generate new cluster here!
-          v<-FindCluster(index = i, neighborhood = neighborhood, data = data, Epsilon = Epsilon, MinPoints = minPts, clusterNum = clusterNum, rawSize)
-        print(v)
-        clustering<-c(clustering, v)
+        v<-FindCluster(index = i, neighborhood = neighborhood, data = data, Epsilon = Epsilon, MinPoints = minPts, clusterNum = clusterNumber, rawSize)
+        #print(v)
+        clustering<-c(clustering, list(v[[1]]))
         clusterNumber = clusterNumber+1
+        data = v[[2]]
       }
     }
   }
   return(clustering)
 }
 
-
-#distills an adjacency list of cluster connections to a cluster list
-reduceToClusters<-function(clustering){
-  toRemove<-vector(mode = "numeric")
-  
+#Creates a 3d Scatter plot of the DB Scan results
+plotDBscan<-function(vectorList, data){
+  colors = c("red", "green","blue","magenta", "black", "gray", "brown", "orange", "pink", "cyan")
+  firstSet<-vectorList[[1]]
+  points3D(x = data[firstSet[1],1], y = data[firstSet[1],2], z = data[firstSet[1],3], col=colors[1], xlim=c(0,10), ylim=c(0,10), zlim=c(0,10), main = "Clusters")
+  for(i in 2:length(firstSet)){
+    points3D(x = data[firstSet[i],1], y = data[firstSet[i],2], z = data[firstSet[i],3], col=colors[1],add=TRUE)
+  }
+  for(i in 2:length(vectorList)){
+    for(h in 1:length(vectorList[[i]])){
+      points3D(x = data[vectorList[[i]][h],1], y = data[vectorList[[i]][h],2], z = data[vectorList[[i]][h],3], col=colors[i], add=TRUE)
+    }
+  }
 }
