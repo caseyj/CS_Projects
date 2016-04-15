@@ -8,27 +8,6 @@
 #Usage: Load the following functions into R in order to begin using DBScan
 ##################
 
-
-##################
-#The cluster data structure, keeps track of any cluster data needed
-##IDList-the ID's associated with the cluster
-##Centroid-the center of the cluster
-##Clustered-the actual cluster data
-##################
-cluster<-function(IDList=0, Centroid=1, Clustered=1){
-  IDs<-vector()
-  nCluster<-list(
-    IDs = IDList,
-    cent = Centroid,
-    Clust = Clustered
-  )
-  class(nCluster)<- append(class(nCluster),"cluster")
-  return(nCluster)
-}
-
-####################################
-
-
 ##################
 #Finds the euclidean distance between two equally sized vectors
 ##v1-the first vector
@@ -45,95 +24,6 @@ euclidean<-function(v1, v2, l){
   }
   #return the square root of these 
   return(sqrt(ecl))
-}
-
-##################
-#generate Cluster from raw row of data
-#toBeClustered->csv derived data frame row that we wish to create a cluster from
-#returns->single cluster object (single data point)
-##################
-genClust<-function(toBeClustered, ID){
-  clust<-cluster(IDList= ID, Centroid = toBeClustered[1:length(toBeClustered)], Clustered = toBeClustered[1:length(toBeClustered)])
-  return(clust)
-}
-
-##################
-#generate Cluster list
-#RowsofData->csv derived data frame row that we wish to create a cluster list from
-#returns->list of cluster objects
-##################
-generateClusters<-function(RowsofData){
-  #create an empy list we will use to store the clusters
-  ClusterList<-list()
-  #iterate through all of the data rows
-  for(i in 1:nrow(RowsofData)){
-    #generate a single cluster
-    gclu<-genClust(RowsofData[i,], i)
-    #add it to the list
-    ClusterList<-c(ClusterList, gclu)
-  }
-  #returning objects is generally a good idea
-  return(ClusterList)
-}
-
-##################
-#Returns the position within the cluster list of a given cluster's ID's
-#clNum->the number of the cluster, who's ID's we would like to view
-#returns->returns the position of a cluster's ID based upon the number 
-##of the cluster provided
-##################
-findClId<-function(clNum){
-  c<-clNum-1
-  return((c * 3)+1)
-}
-
-##################
-#Returns the position within the cluster list of a given cluster's centroid
-#clNum->the number of the cluster, who's centroid we would like to view
-#returns->returns the position of a cluster's centroid based upon the number
-##of the cluster provided
-##################
-findClcent<-function(clNum){
-  c<-clNum-1
-  return((c * 3)+2)
-}
-
-##################
-#Returns the position within the cluster list of a given cluster's members
-#clNum->the number of the cluster, who's member data we would like to view
-#returns->returns the position of a cluster's member data based upon the number
-##of the cluster provided
-##################
-findClclust<-function(clNum){
-  return(clNum * (3) +0)
-}
-
-##################
-#Returns the centroid of a cluster
-#dF-> the data frame corresponding to the cluster
-#returns->returns a full centroid for the attributes of a given cluster
-##################
-findCentroid<-function(dF){
-  # initialize a new empty vector
-  cent = vector()
-  #iterate through the attributes
-  for(i in 1:length(names(dF))){
-    #make position i of cent equal to the mean of the ith attribute
-    cent = c(cent, sum(dF[[i]])/nrow(dF))
-  }
-  #return the vector
-  return(cent)
-}
-
-##################
-#Finds the euclidean distance between two clusters
-#c1->the location of the first cluster
-#c2->the location of the second cluster
-#returns-> the numerical euclidean distance between the two clusters
-##################
-clusterDist<-function(c1, c2){
-  #return the result of the function call euclidean on findCentroid[1,2]
-  return(euclidean(findCentroid(c1),findCentroid(c2), (length(c2)) ))
 }
 
 ##################
@@ -225,49 +115,117 @@ checkArea<-function(Epsilon, dataSet, dataIndex, rawSize){
   #loop through data points
   for(i in 1:nrow(dataSet)){
     #find distance between current row, and comparison row
-    dist<-dist = euclidean(v1 = dataSet[i,], v2 = dataSet[dataIndex,], l = rawSize)
+    dist = euclidean(v1 = dataSet[i,], v2 = dataSet[dataIndex,], l = rawSize)
     #if the distance is less than epsilon, and not the same dataPoint
     if(dist<=Epsilon && dist!=0){
       #add it to the returning vector
-      vecto<-c(vecto, dist)
+      vecto<-c(vecto, i)
     }
   }
-  return(dist)
+  return(vecto)
+}
+
+#returns an entire cluster and vetted data set via a list
+FindCluster<-function(index, neighborhood, data, rawSize, Epsilon, MinPoints, clusterNum){
+  #print(neighborhood)
+  newClust<-vector(mode = "numeric")
+  newClust<-c(newClust, index)
+  data[index,]$member = clusterNum
+  #begin looping through neighbors
+  for(i in 1:length(neighborhood)){
+    #check if seen
+    curNabe<-neighborhood[i] 
+    if(data[curNabe,]$seen==0){
+      #set it as seen
+      data[curNabe,]$seen = 1
+      #find its neighbors and add them to neighborlist
+      nabes<-checkArea(Epsilon = Epsilon, dataSet = data, rawSize = rawSize, dataIndex = i)
+      #if the point is a viable corePt
+      if(length(nabes)>=MinPoints){
+        #iterate through each neighbor and add uniques to the neighborhood
+        # queue
+        for(j in 1:length(nabes)){
+          if(is.element(el = nabes[j], set = neighborhood) == FALSE){
+            neighborhood<-c(neighborhood, nabes[i])
+          }
+        }
+        #check if in cluster already
+        if(data[neighborhood[i],]$member==0){
+          #add clusterNumber to dataSet
+          data[neighborhood[i],]$member = clusterNum
+          #add row to cluster
+          newClust<-c(newClust, curNabe)
+        }
+      }
+      else{
+        data[i,]$class = 'N'
+        data[i,]$seen = 1
+      }
+    }
+    
+  }
+  #return both the new data and the cluster
+  ret<-list()
+  ret<-c(ret, list(newClust))
+  ret<-c(ret, list(data))
+  return(ret)
 }
 
 #Runs DBScan algorithm, with a given epsilon
 # Assumes data already has been run through a classification routine
-DBScanner<-function(data, Epsilon, rawSize, classifyLoc, minPts=4){
-  #remove any noise by classification
-  cleanDat<-subset(data, data[[classifyLoc]]!='N')
-  #generate a cluster list
-  
-  clustering<-generateClusters(RowsofData = cleanDat)
-  for(i in 1:(nrow(cleanDat)-1)){
-    #current row comparing use
-    current<-cleanDat[i,]
-    #loop through all 
-    for(j in ((i+1):nrow(cleanDat))){
-      #get the euclidean distance between the two current comp points
-      dist = euclidean(v1 = cleanDat[i,], v2 = cleanDat[j,], l = rawSize)
-      #if its less than or equal to Epsilon, we create an edge between the two
-      if(dist<=Epsilon){
+DBScanner<-function(data, Epsilon, rawSize, minPts=4){
+  clustering = list()
+  clusterNumber = 1
+  #set seen as 0, member as 0, and character as empty
+  data$seen<-vector(mode = "numeric", length = nrow(data))
+  data$class<-vector(mode = "character", length = nrow(data))
+  data$member<-vector(mode = "numeric", length = nrow(data))
+  #loop through the data
+  for(i in 1:nrow(data)){
+    #if we havent seen this point yet
+    neighborhood<-vector(mode = "numeric")
+    if(data[i,]$seen==0){
+      #mark as seen
+      data[i,]$seen <-1
+      #get its immediate neighbors
+      neighborhood<-checkArea(Epsilon = Epsilon, dataSet = data, rawSize = rawSize, dataIndex = i)
+      #if it doesnt really have enough neighbors, its noise
+      if(length(neighborhood)<minPts){
+        data[i,]$class = 'N'
+        data[i,]$seen = 1
         
-        idI<-findClId(clNum = i)
-        idJ<-findClId(clNum = j)
-        #add the ID's together
-        clustering[[idI]] = c(clustering[[idI]], j)
-        clustering[[idJ]] = c(clustering[[idJ]], i)
-        
+      }
+      #otherwise
+      else{
+        #generate new cluster here!
+        v<-FindCluster(index = i, neighborhood = neighborhood, data = data, Epsilon = Epsilon, MinPoints = minPts, clusterNum = clusterNumber, rawSize)
+        #if the cluster is not larger than the minimum number of points required, igore 
+        #if(length(v[[1]])>=minPts){
+          #otherwise, add it to the clusterList!
+          clustering<-c(clustering, list(v[[1]]))
+          clusterNumber = clusterNumber+1
+        #}
+        data = v[[2]]
       }
     }
   }
   return(clustering)
 }
 
-
-#distills an adjacency list of cluster connections to a cluster list
-reduceToClusters<-function(clustering){
-  toRemove<-vector(mode = "numeric")
-  
+#Creates a 3d Scatter plot of the DB Scan results
+plotDBscan<-function(vectorList, data){
+  #a vector of the namespace colors
+  colors = c("red", "green","blue","magenta", "black", "gray", "brown", "orange", "pink", "cyan")
+  #lets add the first cluster
+  firstSet<-vectorList[[1]]
+  points3D(x = data[firstSet[1],1], y = data[firstSet[1],2], z = data[firstSet[1],3], col=colors[1], xlim=c(0,10), ylim=c(0,10), zlim=c(0,10), main = "Clusters")
+  for(i in 2:length(firstSet)){
+    points3D(x = data[firstSet[i],1], y = data[firstSet[i],2], z = data[firstSet[i],3], col=colors[1],add=TRUE)
+  }
+  #loop through the rest of the clusters and add them to the plot
+  for(i in 2:length(vectorList)){
+    for(h in 1:length(vectorList[[i]])){
+      points3D(x = data[vectorList[[i]][h],1], y = data[vectorList[[i]][h],2], z = data[vectorList[[i]][h],3], col=colors[i%%length(colors)], add=TRUE)
+    }
+  }
 }
