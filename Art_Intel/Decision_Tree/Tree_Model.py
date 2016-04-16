@@ -146,25 +146,20 @@ iterative algorithm, that will find the best split point at a given decision nod
 iterates through each given dimension to find where the best split will be
 returns a list with the first index the weighted mixed GINI, the second index is the split dimension
 '''
-def threshold(data, targetIndex):
+def threshold(data, targetIndex, numberOfVars):
     #set the split point to infinity
     splitPoints = sys.maxint
     #no dimension selected to split on yet
     splitDim = -1
     #create a list of dictionaries for the values of each dimension
-    itera = list()
-    itera.append(CountSort(data, 0))
-    itera.append(CountSort(data, 1))
-    itera.append(CountSort(data, 2))
-    itera.append(CountSort(data, 3))
-    itera.append(CountSort(data, 4))
-    print itera
+    
     #iterate through each dimension we are concerned about
-    for i in range(0,len(itera)):
+    for i in range(1,numberOfVars):
         #iterate over each of the values in the current dimension
-        for j in range(0, len(itera[i])):
+        Ldict = CountSort(data, i)
+        for j in range(0, len(Ldict)):
             #if the weighted GINI is min, set this as the split criteria
-            mG = WGINI(data, targetIndex, itera[i][j], i)
+            mG = WGINI(data, targetIndex, Ldict[j], i)
             if mG<splitPoints:
                 splitPoints = mG
                 splitDim = i
@@ -207,7 +202,7 @@ def TreeMaker(data, targetIndex):
     if currentWeight <= 0.1:
         return decisionNde(PredomClass(data, targetIndex), data)
     else:
-        thresh = threshold(data, targetIndex)
+        thresh = threshold(data, targetIndex, 4)
         root = spltNde(thresh[0], thresh[1])
         Listicle = GenSplit(data, thresh[0], thresh[1])
         root.right = TreeMaker(Listicle[0], targetIndex)
