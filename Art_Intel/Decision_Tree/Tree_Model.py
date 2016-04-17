@@ -40,13 +40,17 @@ def classContent(data, targetIndex):
     #init a new dictionary
     classDict = dict()
     #loop through all rows
-    for i in data:
+    for i in range(0,(len(data)-1)):
         #if we have already seen the class then increment
-        if i[targetIndex] in classDict:
-            classDict[i[targetIndex]] = classDict[i[targetIndex]] + 1
+        #print data[i][targetIndex]
+
+        if data[i][targetIndex] in classDict:
+            print "work" 
+            print i
+            classDict[data[i][targetIndex]] = classDict[data[i][targetIndex]] + 1
         #otherwise create a new instance in the dictionary and set it to 1
         else:
-            classDict[i[targetIndex]] = 1
+            classDict[data[i][targetIndex]] = 1
     return classDict
 
 '''
@@ -58,8 +62,7 @@ returns->a list of sorted data
 def CountSort(data, targetIndex):
     classed = classContent(data, targetIndex)
     datas = list(classed.keys())
-    print datas
-    return datas.sort()
+    return sorted(datas)
 
 '''
 Finds and returns the predominant class of a list of datapoints
@@ -69,16 +72,8 @@ targetIndex->the index of the classification variable
 returns->the target variable
 '''
 def PredomClass(data, targetIndex):
-    #init a new dictionary
-    classDict = dict()
-    #loop through all rows
-    for i in data:
-        #if we have already seen the class then increment
-        if i[targetIndex] in classDict:
-            classDict[i[targetIndex]] = classDict[i[targetIndex]] + 1
-        #otherwise create a new instance in the dictionary and set it to 1
-        else:
-            classDict[i[targetIndex]] = 1
+    #init a new CC dictionary
+    classDict = classContent(data, targetIndex)
     #list the values
     v = list(classDict.values())
     #list the keys
@@ -94,14 +89,14 @@ def GenSplit(data, splitterVal, splitterDim):
     splitList1 = list()
     splitList2 = list()
     #iterate once through all of the data
-    for i in range(1,len(data)):
+    for i in range(0,len(data)-1):
         #if data at the split location is greater than the splitterVal
         ##append to list of the larger values
-        if i[splitterDim] >= splitterVal:
-            splitList2.append(i)
+        if data[i][splitterDim] >= splitterVal:
+            splitList2.append(data[i])
         #otherwise append to the list of the smaller values
         else:
-            splitList1.append(i)
+            splitList1.append(data[i])
     #create an empty list and add the smaller values first, larger values second
     returner = list()
     returner.append(splitList1)
@@ -132,13 +127,13 @@ def WGINI(data, targetIndex, splitterVal, splitterDim):
     Listicle = GenSplit(data, splitterVal, splitterDim)
     #class contents into two separate variables
     SP1 =  classContent(Listicle[0], targetIndex)
-    SP2 = classContent(listicle[1], targetIndex)
+    SP2 = classContent(Listicle[1], targetIndex)
     #grab the values
     vals1 = list(SP1.values())
     vals2 = list(SP2.values())
     #calculate weighted mixed GINI
-    w = (sum(vals1) / (len(data)))*Gini(vals1)
-    w = w + (sum(vals2) / (len(data)))*Gini(vals2)
+    w = (sum(vals1) / (len(data)))*Gini(vals1, targetIndex)
+    w = w + (sum(vals2) / (len(data)))*Gini(vals2, targetIndex)
     return w
 
 '''
@@ -198,7 +193,6 @@ returns the root node for a given Tree_Model dataset
 '''
 def TreeMaker(data, targetIndex):
     currentWeight = Gini(data, targetIndex)
-    print currentWeight
     if currentWeight <= 0.1:
         return decisionNde(PredomClass(data, targetIndex), data)
     else:
