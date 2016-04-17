@@ -109,19 +109,29 @@ def GenSplit(data, splitterVal, splitterDim):
 Computes and returns the GINI for a single node for a split
 '''
 def Gini(data, targetIndex):
-    #print(data)
+    #as long as we have more than 0 data points
     if len(data) > 0:
+        #generate a count of all of the classes
         c = classContent(data, targetIndex)
+        print c
+        #store the counts in a list
         vals = list(c.values())
+        #keep a sum of those values
         summa = sum(vals)
+        #what we hope to return
         collect = float(0)
+        #iterate through the values
         for i in vals:
+            #find their relative frequency
             b = float(i)/summa
-            b = b**2
-            collect = float(collect) + b
+            #square it 
+            b = b * b
+            #add it to the collect thing
+            collect = float(collect) + (float(b))
+        print 1 - collect
         return float(1) - float(collect)
     else:
-        return 1
+        return .5
 
 
 
@@ -167,7 +177,7 @@ def threshold(data, targetIndex, numberOfVars):
             if mG<WGM:
                 splitPoints = Ldict[j]
                 splitDim = i
-        print splitPoints
+        #print splitPoints
     report = list()
     report.append(splitPoints)
     report.append(splitDim)
@@ -203,13 +213,11 @@ returns the root node for a given Tree_Model dataset
 '''
 def TreeMaker(data, targetIndex):
     currentWeight = Gini(data, targetIndex)
+    print currentWeight
     if currentWeight <= 0.1:
         return decisionNde(PredomClass(data, targetIndex), data)
     else:
-        print data[0]
-        print data[1]
         thresh = threshold(data, targetIndex, 4)
-        print thresh
         root = spltNde(thresh[0], thresh[1])
         Listicle = GenSplit(data, thresh[0], thresh[1])
         root.right = TreeMaker(Listicle[0], targetIndex)
