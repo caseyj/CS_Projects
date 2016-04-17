@@ -40,13 +40,14 @@ def classContent(data, targetIndex):
     #init a new dictionary
     classDict = dict()
     #loop through all rows
+    #print (data)
     for i in range(0,(len(data)-1)):
         #if we have already seen the class then increment
         #print data[i][targetIndex]
 
         if data[i][targetIndex] in classDict:
-            print "work" 
-            print i
+            #print "work" 
+           # print i
             classDict[data[i][targetIndex]] = classDict[data[i][targetIndex]] + 1
         #otherwise create a new instance in the dictionary and set it to 1
         else:
@@ -92,7 +93,7 @@ def GenSplit(data, splitterVal, splitterDim):
     for i in range(0,len(data)-1):
         #if data at the split location is greater than the splitterVal
         ##append to list of the larger values
-        if data[i][splitterDim] >= splitterVal:
+        if data[i][splitterDim] > splitterVal:
             splitList2.append(data[i])
         #otherwise append to the list of the smaller values
         else:
@@ -108,15 +109,20 @@ def GenSplit(data, splitterVal, splitterDim):
 Computes and returns the GINI for a single node for a split
 '''
 def Gini(data, targetIndex):
-    c = classContent(data, targetIndex)
-    vals = list(c.values())
-    summa = sum(vals)
-    collect = float(0)
-    for i in vals:
-        b = float(i)/summa
-        b = b**2
-        collect = float(collect) + b
-    return float(1) - float(collect)
+    #print(data)
+    if len(data) > 0:
+        c = classContent(data, targetIndex)
+        vals = list(c.values())
+        summa = sum(vals)
+        collect = float(0)
+        for i in vals:
+            b = float(i)/summa
+            b = b**2
+            collect = float(collect) + b
+        return float(1) - float(collect)
+    else:
+        return 1
+
 
 
 '''
@@ -132,8 +138,11 @@ def WGINI(data, targetIndex, splitterVal, splitterDim):
     vals1 = list(SP1.values())
     vals2 = list(SP2.values())
     #calculate weighted mixed GINI
-    w = (sum(vals1) / (len(data)))*Gini(vals1, targetIndex)
-    w = w + (sum(vals2) / (len(data)))*Gini(vals2, targetIndex)
+    w = 0
+    if len(vals1) > 0:
+        w = (sum(vals1) / (len(data)))*Gini(Listicle[0], targetIndex)
+    if len(vals2) > 0:
+        w = w + (sum(vals2) / (len(data)))*Gini(Listicle[1], targetIndex)
     return w
 
 '''
@@ -147,17 +156,18 @@ def threshold(data, targetIndex, numberOfVars):
     #no dimension selected to split on yet
     splitDim = -1
     #create a list of dictionaries for the values of each dimension
-    
+    WGM  = sys.maxint
     #iterate through each dimension we are concerned about
-    for i in range(1,numberOfVars):
+    for i in range(0,numberOfVars):
         #iterate over each of the values in the current dimension
         Ldict = CountSort(data, i)
         for j in range(0, len(Ldict)):
             #if the weighted GINI is min, set this as the split criteria
             mG = WGINI(data, targetIndex, Ldict[j], i)
-            if mG<splitPoints:
-                splitPoints = mG
+            if mG<WGM:
+                splitPoints = Ldict[j]
                 splitDim = i
+        print splitPoints
     report = list()
     report.append(splitPoints)
     report.append(splitDim)
@@ -179,7 +189,7 @@ class decisionNde():
 class spltNde():
     def __init__(self, splitValue, splitD):
         self.split = splitValue
-        self.splitDim = splitDim
+        self.splitDim = splitD
         self.left = None
         self.right = None
         self.WhoAMI= 'd'
@@ -196,7 +206,10 @@ def TreeMaker(data, targetIndex):
     if currentWeight <= 0.1:
         return decisionNde(PredomClass(data, targetIndex), data)
     else:
+        print data[0]
+        print data[1]
         thresh = threshold(data, targetIndex, 4)
+        print thresh
         root = spltNde(thresh[0], thresh[1])
         Listicle = GenSplit(data, thresh[0], thresh[1])
         root.right = TreeMaker(Listicle[0], targetIndex)
