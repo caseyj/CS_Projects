@@ -41,17 +41,20 @@ def classContent(data, targetIndex):
     classDict = dict()
     #loop through all rows
     #print (data)
-    for i in range(0,(len(data)-1)):
-        #if we have already seen the class then increment
-        #print data[i][targetIndex]
+    if len(data) == 1:
+        classDict[data[0][targetIndex]] = 1
+    if len(data) > 1:
+        for i in range(0,(len(data)-1)):
+            #if we have already seen the class then increment
+            #print data[i][targetIndex]
 
-        if data[i][targetIndex] in classDict:
-            #print "work" 
-           # print i
-            classDict[data[i][targetIndex]] = classDict[data[i][targetIndex]] + 1
-        #otherwise create a new instance in the dictionary and set it to 1
-        else:
-            classDict[data[i][targetIndex]] = 1
+            if data[i][targetIndex] in classDict:
+                #print "work" 
+               # print i
+                classDict[data[i][targetIndex]] = classDict[data[i][targetIndex]] + 1
+            #otherwise create a new instance in the dictionary and set it to 1
+            else:
+                classDict[data[i][targetIndex]] = 1
     return classDict
 
 '''
@@ -73,6 +76,8 @@ targetIndex->the index of the classification variable
 returns->the target variable
 '''
 def PredomClass(data, targetIndex):
+    if len(data) < 1:
+        return None
     #init a new CC dictionary
     classDict = classContent(data, targetIndex)
     #list the values
@@ -111,7 +116,7 @@ Computes and returns the GINI for a single node for a split
 '''
 def Gini(data, targetIndex):
     #as long as we have more than 0 data points
-    if len(data) > 0:
+    if len(data) > 1:
         #generate a count of all of the classes
         c = classContent(data, targetIndex)
         #store the counts in a list
@@ -134,7 +139,7 @@ def Gini(data, targetIndex):
         
         return float(1) - float(collect)
     else:
-        return .5
+        return 0
 
 
 '''
@@ -232,7 +237,8 @@ def TreeMaker(data, targetIndex):
     #print len(data)
     #input()
     currentWeight = Gini(data, targetIndex)
-    print currentWeight
+    #print (data)
+    #print currentWeight
     if currentWeight <= 0.1:
         return decisionNde(PredomClass(data, targetIndex), data)
     else:
