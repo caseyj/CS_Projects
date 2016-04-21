@@ -1,10 +1,11 @@
 import pickle
 import csv
+import sys
 import numpy as np
 from Tree_Model import Tree
 
 storage = list()
-with open('data.csv', 'rb') as inpu:
+with open(sys.argv[1], 'rb') as inpu:
 	inputData = csv.reader(inpu)
 	inputData.next()
 
@@ -18,6 +19,7 @@ with open('data.csv', 'rb') as inpu:
 #can use any package to read the file
 model =  Tree()
 model.train(storage)
-with open('model.pkl','wb') as h:
-    pickle.load(model,h)
+#with open('model.pkl','wb') as h:
+    #pickle.load(model,h)
+pickle.dump(model,  open('model.pkl','wb'))
 
