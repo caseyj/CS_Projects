@@ -28,18 +28,35 @@ class Tree():
                 correct = correct + 1
         return float(correct)/float(len(pre))
     
-    def ConfusionMatrix(self,TestData):
+    def ConfusionMatrix(self,TestData, trainingData):
         #print confusion Matrix 
         #last column has the class value
-        pre = self.predict(testData) 
-        Correct_Answers=classContent(pre, len(pre[0])-2)
-        Correct_Classification=dict()
-        Incorrect_Classification = dict()
+        pre = self.predict(TestData) 
+        Correct_Answers=classContent(pre, len(trainingData[0])-1)
+        incorp = dict()
+        CM_List = list()
         classNames = list(Correct_Answers.keys())
-        for i in classNames:
-            Correct_Classification[i] = 0
-            Incorrect_Classification[i] = 0
+        for i in range(0,len(classNames)):
+            incorp[classNames[i]] = i
+            Mdict = dict()
+            for i in range(0,len(classNames)):
+                Mdict[classNames[i]] = 0
+            CM_List.append(Mdict)
         for i in range(0,len(pre)):
+            predicted = pre[i][len(pre[i])-1]
+            actual = pre[i][len(pre[i])-2]
+            actInt = incorp[actual]
+            CM_List[actInt][predicted] = CM_List[actInt][predicted] + 1
+        print "Predicted, below, on the side are the expected"
+        print classNames
+        for i in range(0, len(CM_List)):
+            print incorp.keys()[i],
+            valCur = list(CM_List[i].values())
+            for j in valCur:
+                print j,
+            print " "
+
+
 
 
 
