@@ -16,10 +16,13 @@ class Tree():
     def predict(self,testData):
         #testData does not have the class column
         #returns list of the predicted output
-        return []
+        returnList = list()
+        data2 = Prediction_Engine(self.treemodel, testData)
+        return data2
     def Accuracy(self,testData):
         #Last Column comtains the class
         pre = self.predict(testData[:-1])
+        print pre
         acc =len([1 for i,a,p in enumerate(zip(testData[-1],p)) if a==p]) // len(p)
         return acc
     
@@ -110,7 +113,6 @@ def GenSplit(data, splitterVal, splitterDim):
     returner.append(splitList2)
     return returner
 
-
 '''
 Computes and returns the GINI for a single node for a split
 '''
@@ -177,27 +179,21 @@ def threshold(data, targetIndex, numberOfVars):
     DataSplitL = list()
     DataSplitR = list()
     #iterate through each dimension we are concerned about
-
-    #print data#[0][len(data[0])-2]
     for i in range(0, len(data[0])-2):
         #iterate over each of the values in the current dimension
         Ldict = CountSort(data, i)
         for j in range(0, len(Ldict)):
             #if the weighted GINI is min, set this as the split criteria
             Listicle = GenSplit(data, Ldict[j], i)
-            #print len(Listicle[0])
-            #print len(Listicle[1])
             mG = WGINI(data, targetIndex, Listicle[0], Listicle[1])
-            #print mG
             if mG < WGM:
+                #store the below
                 splitPoints = Ldict[j]
                 splitDim = i
                 DataSplitL = Listicle[0]
                 DataSplitR = Listicle[1]
+                #MAKE SURE THIS IS CHANGED, JOHN IS TOO GOOD AT TYPOS
                 WGM = mG
-
-        #print splitPoints
-    #print mG
     report = list()
     report.append(splitPoints)
     report.append(splitDim)
@@ -211,10 +207,13 @@ class decisionNde():
     def __init__(self, className, data):
         self.classy = className
         self.dataset = data
-        self.WhoAMI = 's'
+        self.WhoAMI = 'd'
 
     def WhoAMI(self):
         return self.WhoAMI
+
+    def classy(self):
+        return self.classy
 
 '''
 '''
@@ -224,32 +223,92 @@ class spltNde():
         self.splitDim = splitD
         self.left = None
         self.right = None
-        self.WhoAMI= 'd'
+        self.WhoAMI= 's'
 
     def WhoAMI(self):
         return self.WhoAMI
+
+    def split(self):
+        return self.split
+
+    def splitDim(self):
+        return self.splitDim
+
+    def right_Split(self):
+        return self.right
+
+    def left_Split(self):
+        return self.left
 
 
 '''
 returns the root node for a given Tree_Model dataset
 '''
 def TreeMaker(data, targetIndex):
-    #print len(data)
-    #input()
     currentWeight = Gini(data, targetIndex)
-    #print (data)
-    #print currentWeight
     if currentWeight <= 0.1:
         return decisionNde(PredomClass(data, targetIndex), data)
     else:
+        #generate the splitting criteria
+            #[0]->the value on which the split will occur
+            #[1]->the dimension the split will occur in
+            #[2]->the "left" side(less than the value)
+            #[3]->the "right" side(greater than the value)
         thresh = threshold(data, targetIndex, 4)
-       # print thresh[0]
+        #generate the "root"
         root = spltNde(thresh[0], thresh[1])
-        #Listicle = GenSplit(data, thresh[0], thresh[1])
-        #print root.split
-        #print root.splitDim
-        #print len(thresh[2])
-        root.right = TreeMaker(thresh[2], targetIndex)
-        root.left = TreeMaker(thresh[3], targetIndex)
+        #recurse on the left and right sides
+        root.left = TreeMaker(thresh[2], targetIndex)
+        root.right = TreeMaker(thresh[3], targetIndex)
+        #return the tree
         return root
-    return null
+    return None
+
+
+'''
+Runs the prediction operations of a given Test set and root of a tree
+    A BFS implementation is used to make the predictions
+'''
+def Prediction_Engine(root, Test_Data):
+    #store the size just incase
+    size_Test = len(Test_Data)
+    #generate a list of characters/strings large enough for our data 
+    classifications = [""]*size_Test
+    classed_Data = list()
+    #youre going to store the data used at each level of the queue
+    splitsville = [Test_Data]
+    #the root given to us is the beginning of the queue
+    queue = [root]
+    #the index is zero because we only start with 1 item
+    queueDex = 0
+    #until we run out of things in the queue
+    while(queueDex!=len(queue)):
+        #if we arent looking at a split node, and it isnt NULL/None/Whatever
+        print queue[queueDex].WhoAMI
+        if queue[queueDex].WhoAMI!='s':
+            if queue[queueDex].WhoAMI != None:
+                #we are going to loop through the list of data in this node
+                print "im in the matrix"
+                for i in splitsville[queueDex]:
+                    #the classifications list is updated with the expected
+                        #class char by appending onto the data list
+                    i.append(queue[queueDex].classy)
+                    classed_Data.append(i)
+
+        #otherwise....
+        else:
+            #store the dimensions and values used we need to split on
+            dimension = queue[queueDex].splitDim
+            value = queue[queueDex].split
+            #generate the split lists
+            split = GenSplit(splitsville[queueDex], value, dimension)
+            #append the left and right nodes we have found
+            queue.append(queue[queueDex].left)
+            queue.append(queue[queueDex].right)
+            #append data from the splits to the split storage list
+            splitsville.append(split[0])
+            splitsville.append(split[1])
+        #keep increasing queueDex
+        queueDex = queueDex + 1
+    #print classifications
+    return classed_Data#classifications
