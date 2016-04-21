@@ -10,26 +10,38 @@ class Tree():
         self.createTree(trainData)
     
     def createTree(self,trainData):
-        self.treemodel= TreeMaker(trainData, 5)
+        self.treemodel= TreeMaker(trainData, len(trainData[0])-1)
         #create the tree
 
     def predict(self,testData):
         #testData does not have the class column
         #returns list of the predicted output
-        returnList = list()
         data2 = Prediction_Engine(self.treemodel, testData)
         return data2
+
     def Accuracy(self,testData):
         #Last Column comtains the class
-        pre = self.predict(testData[:-1])
-        print pre
-        acc =len([1 for i,a,p in enumerate(zip(testData[-1],p)) if a==p]) // len(p)
-        return acc
+        pre = self.predict(testData)
+        correct = 0
+        for i in range(0,len(pre)):
+            if pre[i][len(pre[i])-1] == pre[i][len(pre[i])-2]:
+                correct = correct + 1
+        return float(correct)/float(len(pre))
     
     def ConfusionMatrix(self,TestData):
         #print confusion Matrix 
         #last column has the class value
-        pre = self.predict(testData[:-1])
+        pre = self.predict(testData) 
+        Correct_Answers=classContent(pre, len(pre[0])-2)
+        Correct_Classification=dict()
+        Incorrect_Classification = dict()
+        classNames = list(Correct_Answers.keys())
+        for i in classNames:
+            Correct_Classification[i] = 0
+            Incorrect_Classification[i] = 0
+        for i in range(0,len(pre)):
+
+
 
 
 '''
@@ -284,11 +296,9 @@ def Prediction_Engine(root, Test_Data):
     #until we run out of things in the queue
     while(queueDex!=len(queue)):
         #if we arent looking at a split node, and it isnt NULL/None/Whatever
-        print queue[queueDex].WhoAMI
         if queue[queueDex].WhoAMI!='s':
             if queue[queueDex].WhoAMI != None:
                 #we are going to loop through the list of data in this node
-                print "im in the matrix"
                 for i in splitsville[queueDex]:
                     #the classifications list is updated with the expected
                         #class char by appending onto the data list
