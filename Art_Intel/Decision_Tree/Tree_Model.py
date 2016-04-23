@@ -26,13 +26,14 @@ class Tree():
         for i in range(0,len(pre)):
             if pre[i][len(pre[i])-1] == pre[i][len(pre[i])-2]:
                 correct = correct + 1
+        print correct
         return float(correct)/float(len(pre))
     
-    def ConfusionMatrix(self,TestData, trainingData):
+    def ConfusionMatrix(self,TestData, BaseData):
         #print confusion Matrix 
         #last column has the class value
         pre = self.predict(TestData) 
-        Correct_Answers=classContent(pre, len(trainingData[0])-1)
+        Correct_Answers=classContent(BaseData, len(BaseData[0])-1)
         incorp = dict()
         CM_List = list()
         classNames = list(Correct_Answers.keys())
@@ -47,6 +48,7 @@ class Tree():
             actual = pre[i][len(pre[i])-2]
             actInt = incorp[actual]
             CM_List[actInt][predicted] = CM_List[actInt][predicted] + 1
+        #print CM_List
         print "Predicted, below, on the side are the expected"
         print classNames
         for i in range(0, len(CM_List)):
@@ -314,7 +316,7 @@ def Prediction_Engine(root, Test_Data):
     while(queueDex!=len(queue)):
         #if we arent looking at a split node, and it isnt NULL/None/Whatever
         if queue[queueDex].WhoAMI!='s':
-            if queue[queueDex].WhoAMI != None:
+            if queue[queueDex].classy != None:
                 #we are going to loop through the list of data in this node
                 for i in splitsville[queueDex]:
                     #the classifications list is updated with the expected
