@@ -9,6 +9,16 @@ from operator import itemgetter
 
 '''
 Creates a dictionary counting the N-grams of a given string
+The dictionary acts as a count sort and the dictionary is 
+easily passed from function to function.
+If a string is too short to form an N-Gram of size n,
+	the function returns a dictionary with a single key value
+	pair of {dict[smallKey]:1}
+INPUTS:
+	string: a string for N-Gramization
+	size_of_grams: how large the N-Grams are
+RETURNS:
+	A dictionary of frequency counts for all N-Grams
 '''
 def DictWord(string, size_of_grams):
 	#the dictionary containing N-gram counts for the given string
@@ -19,10 +29,7 @@ def DictWord(string, size_of_grams):
 	last_now = size_of_grams
 	#check if its too short to run and return whatever
 	#also replace and remove any newlines
-	#string = string.replace("'", "\\'", len(string))
 	string = string.rstrip('\n')
-
-
 	if len(string) < size_of_grams:
 		string = "^" + string + "$"
 		graphs_words[string] = 1
@@ -31,6 +38,12 @@ def DictWord(string, size_of_grams):
 	while last_now<=len(string):
 		#named for the wire character, if you havent seen the 
 		#wire you need to seriously get on that. amazing show
+		#WHERES WALLACE
+		#SHHHHIIIIIIIIIIITTTTTTTTTTTTTTTTTT
+		#Its on prime, literally zero excuses
+		#So say we all
+		#^please get that one
+		#Or the force isnt with you
 		stringer_bell = string[start_dex:last_now] 
 		
 		#if its the beginnning of a word add a karat to the begin
@@ -55,6 +68,12 @@ def DictWord(string, size_of_grams):
 
 '''
 Creates and returns a dictionary of N-gram counts for a given list of strings
+This is once again, countsort for N-grams but for an entire LIST of strings
+Inputs:
+	list_of_strings: this is self explanitory, its a list of strings
+	size_of_grams: the max size of N-grams for this iteration
+Returns:
+	A dictionary of N-Gram counts
 '''
 def DictCombine(list_of_strings, size_of_grams):
 	#a dictionary for every N-Gram
@@ -78,6 +97,14 @@ def DictCombine(list_of_strings, size_of_grams):
 '''
 Creates a dictionary of N-Grams that contain a given pattern
 called by var = get_matching(dictionary_of_N_grams, string_of_pattern_to_match)
+This helped easily find matching cases for:
+	What character starts the most words?
+	How many times is the N-Gram "te" seen?
+Inputs:
+	dicto: a dictionary of N-Grams and their counts
+	pattern: the pattern needed to match, which N-grams could feature, maybe
+Returns:
+	A smaller dictionary and the counts which match the given pattern
 '''
 def get_matching(dicto, pattern):
 	#returnable dictionary initiatied and list of keys found
