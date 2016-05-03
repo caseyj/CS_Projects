@@ -5,8 +5,11 @@ Description:
 Called By:
 '''
 import sys
+from operator import itemgetter
 
-
+'''
+Creates a dictionary counting the N-grams of a given string
+'''
 def DictWord(string, size_of_grams):
 	#the dictionary containing N-gram counts for the given string
 	graphs_words = dict()
@@ -16,7 +19,7 @@ def DictWord(string, size_of_grams):
 	last_now = size_of_grams
 	#check if its too short to run and return whatever
 	#also replace and remove any newlines
-	string = string.replace("'", "\'", len(string))
+	#string = string.replace("'", "\\'", len(string))
 	string = string.rstrip('\n')
 
 
@@ -39,7 +42,6 @@ def DictWord(string, size_of_grams):
 			stringer_bell = stringer_bell + "$"#just like stringer
 		
 		#if its in the dictionary, just increment it
-		print stringer_bell
 		if stringer_bell in graphs_words:
 			graphs_words[stringer_bell] += 1
 		#otherwise, create a new key and set it to 1
@@ -50,6 +52,10 @@ def DictWord(string, size_of_grams):
 		last_now+=1
 	return graphs_words
 
+
+'''
+Creates and returns a dictionary of N-gram counts for a given list of strings
+'''
 def DictCombine(list_of_strings, size_of_grams):
 	#a dictionary for every N-Gram
 	superDict = dict()
@@ -69,28 +75,41 @@ def DictCombine(list_of_strings, size_of_grams):
 				superDict[j] = single[j]
 	return superDict
 
-def find_Most(listicle, size_of_grams):
-	scan = DictCombine(listicle, size_of_grams)
-	Count_Sorted_Dict = sorted(scan)
-	return Count_Sorted_Dict
+'''
+Creates a dictionary of N-Grams that contain a given pattern
+called by var = get_matching(dictionary_of_N_grams, string_of_pattern_to_match)
+'''
+def get_matching(dicto, pattern):
+	#returnable dictionary initiatied and list of keys found
+	keyList = dicto.keys()
+	matching = dict()
+	#loop through keys
+	for i in keyList:
+		#if the pattern is in the key
+		if pattern in i:
+			#add the key and it's count to the dictionary we return
+			matching[i] = dicto[i]
+	#return our results
+	return matching
 
 
 
-
-
-
-
+'''
 with open(sys.argv[1], 'rb') as inpu:
 	listicle = inpu.readlines()
-
-Bi_grams = (DictCombine(listicle, 2))
-print Bi_grams
+'''
+#Bi_grams = (DictCombine(listicle, 2))
+#print Bi_grams
 #print Bi_grams["'a$"]
+#print Bi_grams.keys()
 #print find_Most(listicle, 2)[1]
 
+#grams = DictCombine(listicle, sys.argv[2])
 
-
-
-
+'''
+while True:
+	i = "\"" + raw_input("Your request here: ")+"\""
+	print grams[i]
+'''
 #print DictWord("hello", 2)
 #print DictCombine(["the", "quick", "sly", "brown", "fox", "quickly", "to", "a"], 3)
