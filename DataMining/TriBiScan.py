@@ -36,14 +36,6 @@ def DictWord(string, size_of_grams):
 		return graphs_words
 	#loop through straaaang
 	while last_now<=len(string):
-		#named for the wire character, if you havent seen the 
-		#wire you need to seriously get on that. amazing show
-		#WHERES WALLACE
-		#SHHHHIIIIIIIIIIITTTTTTTTTTTTTTTTTT
-		#Its on prime, literally zero excuses
-		#So say we all
-		#^please get that one
-		#Or the force isnt with you
 		stringer_bell = string[start_dex:last_now] 
 		
 		#if its the beginnning of a word add a karat to the begin
